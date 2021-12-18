@@ -1,0 +1,37 @@
+.modal-container {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 3000;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+
+.modal-zoom-in{
+  animation: modal-animate-in .3s forwards ease-out;
+}
+
+.modal-zoom-out {
+  animation: modal-animate-out .3s forwards ease-out;
+}
+
+
+@keyframes modal-animate-in {
+  from {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  to {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+}
+
+@keyframes modal-animate-out {
+  from {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  to {
+    background-color: rgba(0, 0, 0, 0);
+  }
+}

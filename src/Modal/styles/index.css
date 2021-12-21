@@ -5,6 +5,19 @@
   right: 0;
   left: 0;
   z-index: 3000;
+
+}
+
+
+.modal-body {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+.modal-mask {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
@@ -20,18 +33,18 @@
 
 @keyframes modal-animate-in {
   from {
-    background-color: rgba(0, 0, 0, 0);
+    opacity: 0;
   }
   to {
-    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 1;
   }
 }
 
 @keyframes modal-animate-out {
   from {
-    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 1;
   }
   to {
-    background-color: rgba(0, 0, 0, 0);
+    opacity: 0;
   }
 }

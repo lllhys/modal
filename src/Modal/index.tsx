@@ -1,40 +1,38 @@
-import React, {useEffect} from 'react';
-import {IModalClass, IModalProps, ModalState, NoneAnimate} from "../_util/types";
-import store from "../_util/store";
-import {makeObserver} from "../_util/utils";
+import React, {useEffect, useState} from 'react';
+import {IModalClass, IModalConfig, IModalProps, ModalState, NoneAnimate} from "./types";
+import store, {makeObserver} from "../_util/store";
 import './styles/index.css'
 import './styles/keyframe.css'
+import {defaultModalConfig} from "./constants";
+import {getArrayEle} from "../_util/utils";
 
 const appearStates = [ModalState.SHOW, ModalState.CLOSING, ModalState.OPENING]
 
+
+const isAnimating = (pop: IModalClass) => {
+  return pop.state === ModalState.CLOSING || pop.state === ModalState.OPENING;
+}
 
 const ModalContainer: React.FC<IModalProps> = (props) => {
 
 
   const {popList} = store;
-  // const a = [...popList];
 
-  // const [showPopList, setShowPopList] = useState<IModalClass [] >([])
+  const [zIndex, setZIndex] = useState(defaultModalConfig.zIndex);
 
-  // useEffect(() => {
-  //   setShowPopList(a.filter(v => appearStates.includes(v.state)))
-  // }, [a])
-  const showPopList = popList.filter(v => appearStates.includes(v.state));
 
   useEffect(() => {
     if (!props.modalMap) return;
     // 更新store的modalMap
     store.modalMap = props.modalMap
+
   }, [props.modalMap])
 
 
-  // /**
-  //  * 过滤出可见弹窗进行渲染
-  //  */
-  // useEffect(() => {
-  //   const list = popList.filter(v => appearStates.includes(v.state))
-  //   setShowPopList(list);
-  // })
+  useEffect(() => {
+    store.config = {...defaultModalConfig, ...props.config}
+    setZIndex(store.config.zIndex);
+  }, [props.config])
 
   /**
    * animate end 处理， 切换对象生命状态
@@ -45,43 +43,206 @@ const ModalContainer: React.FC<IModalProps> = (props) => {
     if (pop.state === ModalState.CLOSING) pop.changeState(ModalState.CLOSED)
   }
 
-  const calculateTargetAnimation = (pop: IModalClass) => {
+
+  const calculateBodyAnimation = (pop: IModalClass) => {
     if (pop.state === ModalState.SHOW) return "";
     const ani = pop.animate;
     if (ani === NoneAnimate) return "";
     else return `${ani.name} ${ani.duration}ms ${ani.timingFunction} `
   }
 
-  const calculateBodyAnimation = (pop: IModalClass) => {
+  const calculateMaskAnimation = (pop: IModalClass) => {
     if (pop.state === ModalState.OPENING) return 'modal-zoom-in'
     if (pop.state === ModalState.CLOSING) return 'modal-zoom-out'
     return ""
   }
 
+  /**
+   * 计算弹窗蒙层style
+   * @param pop
+   */
+  const calculateMaskStyle = (pop: IModalClass | IModalConfig) => {
+    let style: React.CSSProperties = {}
+    if (pop.mask && pop.maskStyle) style = {...pop.maskStyle}
+    if (pop.zIndex !== undefined) style.zIndex = pop.zIndex
+    return style
+  }
+
+  /**
+   * 弹窗关闭过程中阻止点击事件捕获
+   * @param e
+   * @param pop
+   */
   const preventClick = (e: React.MouseEvent, pop: IModalClass) => {
-    if (pop.state === ModalState.OPENING || pop.state === ModalState.CLOSING){
+    if (pop.state === ModalState.OPENING || pop.state === ModalState.CLOSING || pop.state === ModalState.CLOSED) {
+      e.stopPropagation();
+    }
+  }
 
-      e.preventDefault();
-      return true;
+  /**
+   * 弹窗阻止冒泡
+   * @param e
+   */
+  const stopPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  }
 
+  /**
+   * 弹窗蒙层点击事件
+   * @param e
+   * @param pop
+   */
+  const handleMaskClick = (e: React.MouseEvent, pop: IModalClass) => {
+    if (pop.maskClosable) {
+      pop.close();
     }
   }
 
 
-  return (
-    <section>
+  const getShowPopList = () => {
+
+    return popList.filter(v => appearStates.includes(v.state));
+    // 以下为旧的单弹窗逻辑，目前重构中
+    // if (!store.config.showSingle) return list;
+    //
+    // // 处理单一弹窗场景
+    // if (list.length < 2) return list;
+    //
+    // const tailender = getArrayEle(list, -1)!;
+    // const penult = getArrayEle(list, -2)!;
+    // if (tailender?.state === ModalState.CLOSING || tailender?.state === ModalState.OPENING) {
+    //   // 返回两个，控制渲染
+    //   return [penult, tailender]
+    // }
+    //
+    // return [tailender]
+
+
+  }
+
+  const showPopList = getShowPopList();
+
+  /**
+   *
+   * @param pop
+   * @param options switchType: 单实例状态下需要控制下层弹窗的显示与隐藏
+   */
+  const generateMaskProps = (pop: IModalClass, options?: { invisible?: boolean, switchType?: 'in' | "out" }) => {
+
+    const mask = pop.mask !== undefined ? pop.mask : store.config.mask;
+
+    const switchAni = options?.switchType && (options.switchType === 'in' ? "fadeIn 500ms forwards" : "fadeOut 500ms forwards")
+
+
+    return {
+      className: `modal-container ${calculateMaskAnimation(pop)} ${mask && "modal-mask"}`,
+      style: options?.invisible ? {display: 'none'} : {...calculateMaskStyle(pop), animation: switchAni},
+      onClick: (e: React.MouseEvent) => handleMaskClick(e, pop),
+      key: pop.id,
+    }
+  }
+
+  const generateBodyProp = (pop: IModalClass) => {
+    return {
+      className: `modal-body`,
+      style: {animation: calculateBodyAnimation(pop)},
+      onAnimationEnd: () => handleAnimateEnd(pop),
+      onClickCapture: (e: React.MouseEvent) => preventClick(e, pop),
+      onMouseDownCapture: (e: React.MouseEvent) => preventClick(e, pop),
+      onMouseUpCapture: (e: React.MouseEvent) => preventClick(e, pop),
+      onClick: stopPropagation,
+      onMouseDown: stopPropagation,
+      onMouseUp: stopPropagation,
+    }
+  }
+
+  // /**
+  //  * 单弹窗模式渲染
+  //  */
+  // const renderSingleMode = () => {
+  //   if (!showPopList.length) return;
+  //   console.log("popList ...sds.f.s.df.sf", showPopList)
+  //   const config = store.config;
+  //   // 单弹窗模式下处理
+  //   const first = showPopList[0];
+  //   const last = getArrayEle(showPopList, -1)!;
+  //   let firstAnimation = ""
+  //   if (first !== last) {
+  //     if (last.state === ModalState.OPENING) firstAnimation = "fadeOut 500ms forwards"
+  //     else if (last.state === ModalState.CLOSING) firstAnimation = "fadeIn 500ms forwards"
+  //   }
+  //   return <section
+  //     {...generateMaskProps(last)}
+  //     className={`modal-container ${calculateMaskAnimation(first)} ${config.mask && "modal-mask"}`}
+  //     style={calculateMaskStyle(config)}
+  //     onClick={e => handleMaskClick(e, last)}
+  //     onClickCapture={(e) => preventClick(e, last)}
+  //     onMouseDownCapture={(e) => preventClick(e, last)}
+  //     onMouseUpCapture={(e) => preventClick(e, last)}
+  //   >{
+  //     showPopList.map((pop, i) => {
+  //       const Pop = pop.component;
+  //       return <section
+  //         className="modal-container"
+  //         key={pop.id}>
+  //         <div
+  //           className="modal-body"
+  //           style={{animation: (first === last || i !== 0) ? calculateBodyAnimation(pop) : firstAnimation}}
+  //           onAnimationEnd={() => handleAnimateEnd(pop)}
+  //           onClick={(e) => preventClick(e, pop)}
+  //           onMouseDown={(e) => preventClick(e, pop)}
+  //           onMouseUp={(e) => preventClick(e, pop)}
+  //         >
+  //           {/*{{...Pop, props: pop.props}}*/}
+  //           <Pop {...pop.props} />
+  //         </div>
+  //       </section>
+  //
+  //     })
+  //   }
+  //   </section>
+  // }
+
+  /**
+   * 重写的单弹窗模式
+   */
+  const renderSingleMode = () => {
+    if (!showPopList.length) return;
+
+    const config = store.config
+    // 销毁其他弹窗
+    const destroy = config.destroyOnInvisible;
+
+    const last = getArrayEle(showPopList, -1)!;
+
+    const lastAnimateType = isAnimating(last)
+    // 可视的弹窗数
+    const effectiveNum = lastAnimateType ? 2 : 1
+
+    const _showPopList = showPopList.slice(
+      destroy ? showPopList.length - effectiveNum : 0
+      , showPopList.length);
+
+    const len = _showPopList.length;
+
+    const singleAndNotMulti = config.showSingle && !config.multiMask;
+
+    //       className: `modal-container ${calculateMaskAnimation(pop)} ${mask && "modal-mask"}`,
+    //       style: options?.invisible ? {display: 'none'} : {...calculateMaskStyle(pop), animation: switchAni},
+    return <section style={singleAndNotMulti ? calculateMaskStyle(config) : {}}
+                    className={singleAndNotMulti ? `modal-container ${calculateMaskAnimation(showPopList[0])} ${config.mask && "modal-mask"}` : ""}>
       {
-        showPopList.map(pop => {
-          // console.log(pop.key, pop.state)
+        _showPopList.map((pop, index) => {
           const Pop = pop.component;
-          console.log(pop.props)
-          return <section className={`modal-container ${calculateBodyAnimation(pop)}`}
-                          key={pop.id}
-                          onClickCapture={(e) => preventClick(e, pop)}
-                          onMouseDown={(e) => preventClick(e, pop)}
-                          onMouseUp={(e) => preventClick(e, pop)}
+          return <section
+            {...generateMaskProps(pop, {
+              invisible: index < len - effectiveNum,
+              switchType: (lastAnimateType && index === len - effectiveNum) ? (last.state === ModalState.OPENING ? "out" : "in") : undefined
+            })}
           >
-            <div style={{animation: calculateTargetAnimation(pop)}} onAnimationEnd={() => handleAnimateEnd(pop)}>
+            <div
+              {...generateBodyProp(pop)}
+            >
               {/*{{...Pop, props: pop.props}}*/}
               <Pop {...pop.props} />
             </div>
@@ -89,10 +250,35 @@ const ModalContainer: React.FC<IModalProps> = (props) => {
           </section>
         })
       }
-      {/*<div*/}
-      {/*  className={`modal-body ${this.renderAni(popObj, ModalState.BEFORE_APPEAR, "modalZoomIn")} ${this.renderAni(popObj, ModalState.BEFORE_CLOSE, "modalZoomOut")}`}>*/}
-      {/*  <PopUp popData={popData}/>*/}
-      {/*</div>*/}
+    </section>
+  }
+
+
+  /**
+   * 多弹窗模式渲染
+   */
+  const renderMultiMode = () => {
+    return showPopList.map(pop => {
+      const Pop = pop.component;
+      return <section  {...generateMaskProps(pop)} >
+        <div
+          {...generateBodyProp(pop)}
+        >
+          {/*{{...Pop, props: pop.props}}*/}
+          <Pop {...pop.props} />
+        </div>
+
+      </section>
+    })
+  }
+
+  return (
+    <section style={{zIndex}}>
+      {
+        store.config.showSingle
+          ? renderSingleMode()
+          : renderMultiMode()
+      }
     </section>
   )
 

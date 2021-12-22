@@ -1,7 +1,6 @@
 import {ICloseModalOptions, ICreateModalOptions, IModalClass, popProp, ReactComponent} from "../types";
 import {ModalObject} from "./ModalObject"
 import store from "../../_util/store";
-import {defaultCloseOptions, defaultCreateOptions} from "../constants";
 import './AugmentationModalObject'
 
 namespace Modal {
@@ -35,7 +34,7 @@ namespace Modal {
   }
 
 
-  export function createPop(pop: popProp, options?: ICreateModalOptions): ModalObject {
+  export function createModal(pop: popProp, options?: ICreateModalOptions): ModalObject {
     // 融合默认参数
     // const _options = {...defaultCreateOptions, ...options};
     const _options = {...options}
@@ -49,11 +48,11 @@ namespace Modal {
     return new ModalObject(com, _options);
   }
 
-  export function pushPop(pop: popProp, options?: ICreateModalOptions): ModalObject  {
+  export function pushModal(pop: popProp, options?: ICreateModalOptions): ModalObject  {
 
     const _options = {...options};
 
-    const modal = Modal.createPop(pop, options)
+    const modal = Modal.createModal(pop, options)
     // 立即打开
     if (_options.immediately !== false)
       modal.open();
@@ -61,7 +60,7 @@ namespace Modal {
   }
 
 
-  export function closePop(pop: popProp, options?: ICloseModalOptions): ModalObject  {
+  export function closeModal(pop: popProp, options?: ICloseModalOptions): ModalObject  {
     // 融合默认参数
     const _options = {...options};
 

@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {IModalClass, IModalConfig, IModalProps, ModalState, NoneAnimate} from "./types";
+import {IModalClass, IModalConfig, IModalContainerProps, ModalState, NoneAnimate} from "./types";
 import store, {makeObserver} from "../_util/store";
 import './styles/index.css'
 import './styles/keyframe.css'
 import {defaultModalConfig} from "./constants";
 import {getArrayEle} from "../_util/utils";
+import {ModalObject} from "./class/ModalObject";
 
 const appearStates = [ModalState.SHOW, ModalState.CLOSING, ModalState.OPENING]
-
 
 const isAnimating = (pop: IModalClass) => {
   return pop.state === ModalState.CLOSING || pop.state === ModalState.OPENING;
 }
 
-const ModalContainer: React.FC<IModalProps> = (props) => {
+const ModalContainer: React.FC<IModalContainerProps> = (props) => {
 
 
   const {popList} = store;
@@ -285,4 +285,6 @@ const ModalContainer: React.FC<IModalProps> = (props) => {
 }
 
 
-export default makeObserver<IModalProps>(ModalContainer)
+export type IModalProps<T> = {_modal: ModalObject} & T;
+
+export default makeObserver<IModalContainerProps>(ModalContainer)

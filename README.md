@@ -21,10 +21,6 @@ react dialog component
 [bundlephobia-url]: https://bundlephobia.com/result?p=rc-dialog
 [bundlephobia-image]: https://badgen.net/bundlephobia/minzip/rc-dialog
 
-## Screenshot
-
-<img src="http://gtms04.alicdn.com/tps/i4/TB1dp5lHXXXXXbmXpXXyVug.FXX-664-480.png" />
-
 ## Example
 
 http://localhost:8007/examples/
@@ -33,80 +29,38 @@ online example: https://dialog.react-component.vercel.app/
 
 ## Install
 
-[![rc-dialog](https://nodei.co/npm/rc-dialog.png)](https://npmjs.org/package/rc-dialog)
+```shell
+yarn add @lllhys/modal
+# or
+npm install @lllhys/modal
+```
 
 ## Usage
 
-```js
-var Dialog = require('rc-dialog');
+This is a simple demonstration of how to use `Modal`, please read the documentation if you want to learn more.
 
-ReactDOM.render(
-  <Dialog title={title} onClose={callback1} visible>
-      <p>first dialog</p>
-  </Dialog>
-), document.getElementById('t1'));
+```ts
+import Modal, {ModalContainer, IModalProps} from '@lllhys/modal';
 
-// use dialog
-```
+interface IProps {
 
-## API
+}
 
-### rc-dialog
+const ModalFC = (props: IModalProps<IProps>) => {
 
-| Name                   | Type                           | Default   | Description                                                                     | Version |
-| ---------------------- | ------------------------------ | --------- | ------------------------------------------------------------------------------- | ------- |
-| prefixCls              | String                         | rc-dialog | The dialog dom node's prefixCls                                                 |         |
-| className              | String                         |           | additional className for dialog                                                 |         |
-| style                  | Object                         | {}        | Root style for dialog element.Such as width, height                             |         |
-| zIndex                 | Number                         |           |                                                                                 |         |
-| bodyStyle              | Object                         | {}        | body style for dialog body element.Such as height                               |         |
-| maskStyle              | Object                         | {}        | style for mask element                                                          |         |
-| visible                | Boolean                        | false     | current dialog's visible status                                                 |         |
-| animation              | String                         |           | part of dialog animation css class name                                         |         |
-| maskAnimation          | String                         |           | part of dialog's mask animation css class name                                  |         |
-| transitionName         | String                         |           | dialog animation css class name                                                 |         |
-| maskTransitionName     | String                         |           | mask animation css class name                                                   |         |
-| title                  | String\|React.Element          |           | Title of the dialog                                                             |         |
-| footer                 | React.Element                  |           | footer of the dialog                                                            |         |
-| closable               | Boolean                        | true      | whether show close button                                                       |         |
-| mask                   | Boolean                        | true      | whether show mask                                                               |         |
-| maskClosable           | Boolean                        | true      | whether click mask to close                                                     |         |
-| keyboard               | Boolean                        | true      | whether support press esc to close                                              |         |
-| mousePosition          | {x:number,y:number}            |           | set pageX and pageY of current mouse(it will cause transform origin to be set). |         |
-| onClose                | function()                     |           | called when click close button or mask                                          |         |
-| afterClose             | function()                     |           | called when close animation end                                                 |         |
-| getContainer           | function(): HTMLElement        |           | to determine where Dialog will be mounted                                       |         |
-| destroyOnClose         | Boolean                        | false     | to unmount child compenents on onClose                                          |         |
-| closeIcon              | ReactNode                      |           | specific the close icon.                                                        |         |
-| forceRender            | Boolean                        | false     | Create dialog dom node before dialog first show                                 |         |
-| focusTriggerAfterClose | Boolean                        | true      | focus trigger element when dialog closed                                        |         |
-| modalRender            | (node: ReactNode) => ReactNode |           | Custom modal content render                                                     | 8.3.0   |
+}
 
-## Development
+// App.jsx
+
+const App = () => {
+  const handleClick = () => {
+    const modal = Modal.createModal(ModalFC);
+  }
+  return <>
+    <button onClick = {handleClick} > open < /button>
+    < ModalContainer / >
+    </>
+}
+
 
 ```
-npm install
-npm start
-```
-
-
-
-## Test Case
-
-```
-npm test
-npm run chrome-test
-```
-
-## Coverage
-
-```
-npm run coverage
-```
-
-open coverage/ dir
-
-
-## License
-
-rc-dialog is released under the MIT license.

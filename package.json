@@ -1,7 +1,6 @@
 {
-  "private": true,
-  "name": "@lllhy/modal",
-  "version": "1.0.0",
+  "name": "@lllhys/modal",
+  "version": "0.0.1",
   "scripts": {
     "start": "dumi dev",
     "docs:build": "dumi build",

@@ -1,7 +1,7 @@
 import React from "react";
 
 
-export interface IModalProps {
+export interface IModalContainerProps {
   modalMap?: IModalMap
   config?: IModalConfig
 }
@@ -55,7 +55,7 @@ export type Event<T> = IEventClass & T;
  */
 
 export type ReactComponent = React.FunctionComponentFactory<any> | React.ComponentClass
-// export type ReactComponent = React.FunctionComponent | React.ComponentClass;
+// export type ReactComponent = React.FunctionComponnt | React.ComponentClass;
 // export type ReactComponent = React.ReactNode
 
 export interface IModalClass extends Required<Omit<IOptions, "immediately">>{
@@ -116,8 +116,8 @@ export enum ModalState {
   CREATED = "created",            // 组件初始化完成，已经被监听
   OPENING = 'opening',            // 组件进入视窗，开始播放出现动画
   SHOW = 'show',                  // 组件进入视窗，驻留
-  HIDING = 'hiding',              // 隐藏中
-  HIDDEN = 'hidden',              // 多弹窗情形下，配置为单一显示时非最上层组件状态
+  // HIDING = 'hiding',              // 隐藏中
+  // HIDDEN = 'hidden',              // 多弹窗情形下，配置为单一显示时非最上层组件状态
   CLOSING = 'closing',            // 组件进入视窗，开始播放关闭动画
   CLOSED = 'closed',              // 组件移除视窗，但是仍被监听
   DESTROYED = 'destroyed'         // 组件被移除监听
@@ -128,7 +128,8 @@ export enum ModalState {
  * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
-export interface IStore extends Required<IModalProps>{
+export interface IStore extends Required<IModalContainerProps>{
   updaters: React.DispatchWithoutAction[]
   popList: IModalClass[]
 }
+

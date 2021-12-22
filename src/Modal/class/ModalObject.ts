@@ -78,7 +78,7 @@ export class ModalObject implements IModalClass {
   @event("Open", [Events.BEFORE, Events.AFTER])
   async open(options?: ICreateModalOptions) {
     options && this.setOptions(options);
-    if (this.state !== ModalState.CREATED && this.state !== ModalState.HIDDEN) {
+    if (this.state !== ModalState.CREATED) {
       console.warn('This modal is already visible, calling the open method again will not take effect.', this)
       return;
     }

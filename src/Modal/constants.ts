@@ -9,7 +9,7 @@ import {
 export const defaultAnimateName = 'zoom{}';
 
 export const defaultAnimate: IModalAnimate = {
-  duration: 300,
+  duration: 400,
   name: defaultAnimateName,
   timingFunction: '',
 };
@@ -34,7 +34,7 @@ export const defaultModalConfig: IModalConfig = {
   zIndex: 3000,
   mask: true,
   maskStyle: {
-    backgroundColor: 'rgba(100, 100, 100, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   multiMask: false,
   destroyOnInvisible: false,

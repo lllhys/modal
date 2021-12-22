@@ -8,6 +8,7 @@ import {
 import { ModalObject } from './ModalObject';
 import store from '../../store';
 import './AugmentationModalObject';
+import {getArrayEle} from "../../utils";
 
 namespace Modal {
   export const getModalInstanceByName = (name: string): ModalObject | undefined => {
@@ -19,7 +20,7 @@ namespace Modal {
     return getModalInstanceByPop(store.modalMap[name]);
   };
   export const getModalInstanceByPop = (pop: ReactComponent): ModalObject | undefined => {
-    let modal;
+    let modal = getArrayEle(store.popList, -1);
     store.popList.forEach((v) => {
       v.component === pop && (modal = v);
     });

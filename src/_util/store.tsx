@@ -1,6 +1,5 @@
-import {IModal, IStore} from "../Modal/types";
-import React, {useReducer} from "react";
-
+import { IModal, IStore } from '../Modal/types';
+import React, { useReducer } from 'react';
 
 const store: IStore = {
   updaters: [],
@@ -10,54 +9,41 @@ const store: IStore = {
       // console.log("set监听", target, p, value, receiver);
 
       target[p as keyof typeof target] = value;
-      if (p !== "length") {
+      if (p !== 'length') {
         // 执行更新
         updateAll();
       }
       // console.log("target", target)
-      return true
-    }
+      return true;
+    },
   }),
   modalMap: {},
-  config: {}
-}
+  config: {},
+};
 
 export function updateAll() {
-  store.updaters.map(v => v())
+  store.updaters.map((v) => v());
 }
 
-export function update() {
-
-}
-
-
+export function update() {}
 
 const useUpdate = () => {
-  const [, forceUpdate] = useReducer(s => s + 1, 0);
+  const [, forceUpdate] = useReducer((s) => s + 1, 0);
 
-  if (!store.updaters.includes(forceUpdate)){
+  if (!store.updaters.includes(forceUpdate)) {
     // 注册进入store
     store.updaters.push(forceUpdate);
   }
-
-}
-
-
+};
 
 // decorator
 export function makeObserver<T = any>(Com: React.FC<T>) {
-
   const _new: React.FC<T> = (props) => {
     useUpdate();
 
-    return (
-      <Com {...props} />
-    )
-  }
+    return <Com {...props} />;
+  };
 
-  return React.memo(_new)
-
+  return React.memo(_new);
 }
 export default store;
-
-

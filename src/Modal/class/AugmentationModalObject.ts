@@ -1,11 +1,10 @@
-import {ModalObject} from "./ModalObject";
-import {EventCall} from "../types";
+import { ModalObject } from './ModalObject';
+import { EventCall } from '../types';
 
-
-declare module "./ModalObject" {
+declare module './ModalObject' {
   interface ModalObject {
-    addEventListener: (name: string, call: EventCall) => void
-    removeEventListener: (name: string, call: EventCall) => void
-    removeAllEventListeners: () => void
+    addEventListener: (name: string, call: EventCall) => void;
+    removeEventListener: (name: string, call: EventCall) => void;
+    removeAllEventListeners: () => void;
   }
 }

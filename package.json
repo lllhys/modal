@@ -1,6 +1,15 @@
 {
   "name": "@lllhys/modal",
   "version": "0.0.2",
+  "homepage": "https://github.com/lllhys/modal",
+  "author": "yiminghe@gmail.com",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:lllhys/modal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lllhys/modal/issues"
+  },
   "scripts": {
     "start": "dumi dev",
     "docs:build": "dumi build",

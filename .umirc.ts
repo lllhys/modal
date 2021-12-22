@@ -1,4 +1,4 @@
-import { defineConfig } from 'dumi';
+import {defineConfig} from 'dumi';
 
 export default defineConfig({
   title: 'Modal',
@@ -11,5 +11,8 @@ export default defineConfig({
     ['zh-CN', '中文'],
   ],
   mode: 'site',
+  base: '/modal',
+  // publicPath: '/静态资源起始路径/',
+  exportStatic: {}, // 将所有路由输出为 HTML 目录结构，以免刷新页面时 404
   // more config: https://d.umijs.org/config
 });

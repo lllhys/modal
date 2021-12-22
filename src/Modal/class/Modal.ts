@@ -6,7 +6,7 @@ import {
   ReactComponent,
 } from '../types';
 import { ModalObject } from './ModalObject';
-import store from '../../_util/store';
+import store from '../../store';
 import './AugmentationModalObject';
 
 namespace Modal {

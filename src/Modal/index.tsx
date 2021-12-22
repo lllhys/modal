@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { IModalClass, IModalConfig, IModalContainerProps, ModalState, NoneAnimate } from './types';
-import store, { makeObserver } from '../_util/store';
-import './styles/index.css';
-import './styles/keyframe.css';
+import store, { makeObserver } from '../store';
 import { defaultModalConfig } from './constants';
-import { getArrayEle } from '../_util/utils';
+import { getArrayEle } from '../utils';
 import { ModalObject } from './class/ModalObject';
+import "../../assets/index.css";
+import "../../assets/keyframe.css"
 
 const appearStates = [ModalState.SHOW, ModalState.CLOSING, ModalState.OPENING];
 
@@ -13,6 +13,53 @@ const isAnimating = (pop: IModalClass) => {
   return pop.state === ModalState.CLOSING || pop.state === ModalState.OPENING;
 };
 
+/**
+ * animate end 处理， 切换对象生命状态
+ */
+const handleAnimateEnd = (pop: IModalClass) => {
+  // console.log('aaaa')
+  if (pop.state === ModalState.OPENING) pop.changeState(ModalState.SHOW);
+  if (pop.state === ModalState.CLOSING) pop.changeState(ModalState.CLOSED);
+};
+
+/**
+ * 计算body动画
+ * @param pop
+ */
+const calculateBodyAnimation = (pop: IModalClass) => {
+  if (pop.state === ModalState.SHOW) return '';
+  const ani = pop.animate;
+  if (ani === NoneAnimate) return '';
+  else return `${ani.name} ${ani.duration}ms ${ani.timingFunction} `;
+};
+
+/**
+ * 计算蒙层动画
+ * @param pop
+ */
+const calculateMaskAnimation = (pop: IModalClass) => {
+  if (pop.state === ModalState.OPENING) return 'modal-zoom-in';
+  if (pop.state === ModalState.CLOSING) return 'modal-zoom-out';
+  return '';
+};
+
+/**
+ * 计算弹窗蒙层style
+ * @param pop
+ */
+const calculateMaskStyle = (pop: IModalClass | IModalConfig) => {
+  let style: React.CSSProperties = {};
+  if (pop.mask && pop.maskStyle) style = { ...pop.maskStyle };
+  if (pop.zIndex !== undefined) style.zIndex = pop.zIndex;
+  return style;
+};
+
+
+/**
+ * ModalContainer 组件
+ * @param props
+ * @constructor
+ */
 const ModalContainer: React.FC<IModalContainerProps> = (props) => {
   const { popList } = store;
 
@@ -29,38 +76,7 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
     setZIndex(store.config.zIndex);
   }, [props.config]);
 
-  /**
-   * animate end 处理， 切换对象生命状态
-   */
-  const handleAnimateEnd = (pop: IModalClass) => {
-    // console.log('aaaa')
-    if (pop.state === ModalState.OPENING) pop.changeState(ModalState.SHOW);
-    if (pop.state === ModalState.CLOSING) pop.changeState(ModalState.CLOSED);
-  };
 
-  const calculateBodyAnimation = (pop: IModalClass) => {
-    if (pop.state === ModalState.SHOW) return '';
-    const ani = pop.animate;
-    if (ani === NoneAnimate) return '';
-    else return `${ani.name} ${ani.duration}ms ${ani.timingFunction} `;
-  };
-
-  const calculateMaskAnimation = (pop: IModalClass) => {
-    if (pop.state === ModalState.OPENING) return 'modal-zoom-in';
-    if (pop.state === ModalState.CLOSING) return 'modal-zoom-out';
-    return '';
-  };
-
-  /**
-   * 计算弹窗蒙层style
-   * @param pop
-   */
-  const calculateMaskStyle = (pop: IModalClass | IModalConfig) => {
-    let style: React.CSSProperties = {};
-    if (pop.mask && pop.maskStyle) style = { ...pop.maskStyle };
-    if (pop.zIndex !== undefined) style.zIndex = pop.zIndex;
-    return style;
-  };
 
   /**
    * 弹窗关闭过程中阻止点击事件捕获
@@ -155,53 +171,6 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
     };
   };
 
-  // /**
-  //  * 单弹窗模式渲染
-  //  */
-  // const renderSingleMode = () => {
-  //   if (!showPopList.length) return;
-  //   console.log("popList ...sds.f.s.df.sf", showPopList)
-  //   const config = store.config;
-  //   // 单弹窗模式下处理
-  //   const first = showPopList[0];
-  //   const last = getArrayEle(showPopList, -1)!;
-  //   let firstAnimation = ""
-  //   if (first !== last) {
-  //     if (last.state === ModalState.OPENING) firstAnimation = "fadeOut 500ms forwards"
-  //     else if (last.state === ModalState.CLOSING) firstAnimation = "fadeIn 500ms forwards"
-  //   }
-  //   return <section
-  //     {...generateMaskProps(last)}
-  //     className={`modal-container ${calculateMaskAnimation(first)} ${config.mask && "modal-mask"}`}
-  //     style={calculateMaskStyle(config)}
-  //     onClick={e => handleMaskClick(e, last)}
-  //     onClickCapture={(e) => preventClick(e, last)}
-  //     onMouseDownCapture={(e) => preventClick(e, last)}
-  //     onMouseUpCapture={(e) => preventClick(e, last)}
-  //   >{
-  //     showPopList.map((pop, i) => {
-  //       const Pop = pop.component;
-  //       return <section
-  //         className="modal-container"
-  //         key={pop.id}>
-  //         <div
-  //           className="modal-body"
-  //           style={{animation: (first === last || i !== 0) ? calculateBodyAnimation(pop) : firstAnimation}}
-  //           onAnimationEnd={() => handleAnimateEnd(pop)}
-  //           onClick={(e) => preventClick(e, pop)}
-  //           onMouseDown={(e) => preventClick(e, pop)}
-  //           onMouseUp={(e) => preventClick(e, pop)}
-  //         >
-  //           {/*{{...Pop, props: pop.props}}*/}
-  //           <Pop {...pop.props} />
-  //         </div>
-  //       </section>
-  //
-  //     })
-  //   }
-  //   </section>
-  // }
-
   /**
    * 重写的单弹窗模式
    */
@@ -289,6 +258,6 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
   );
 };
 
-export type IModalProps<T> = { _modal: ModalObject } & T;
+export type IModalProps<T= any> = { _modal: ModalObject } & T;
 
 export default makeObserver<IModalContainerProps>(ModalContainer);

@@ -5,7 +5,6 @@
   right: 0;
   left: 0;
   z-index: 3000;
-
 }
 
 
@@ -23,7 +22,7 @@
 
 
 .modal-zoom-in{
-  animation: modal-animate-in .3s forwards ease-out;
+  animation: modal-animate-in .3s forwards ease-in;
 }
 
 .modal-zoom-out {

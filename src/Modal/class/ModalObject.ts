@@ -1,5 +1,5 @@
 import { event, Events, useEvent } from './Events';
-import store, { updateAll } from '../../_util/store';
+import store, { updateAll } from '../../store';
 import {
   ICloseModalOptions,
   ICreateModalOptions,

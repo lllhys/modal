@@ -3,12 +3,16 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "node",
-    "jsx": "react",
+    "jsx": "preserve",
     "esModuleInterop": true,
     "types": ["jest"],
     "strict": true,
     "skipLibCheck": true,
     "declaration": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "baseUrl": "./",
+    "paths": {
+      "@lllhys/modal": ["src/index.ts"]
+    }
   }
 }

@@ -18,7 +18,6 @@ export interface IModalConfig {
   destroyOnInvisible?: boolean;
 }
 
-export type IModal = IEventFunc & IModalClass;
 
 export interface IEventType {}
 
@@ -29,12 +28,6 @@ export interface IEvent {
 
 export type EventCall = (event: IEvent) => void;
 
-export interface IEventFunc {
-  addEventListener: (name: string, call: EventCall) => void;
-  removeEventListener: (name: string, call: EventCall) => void;
-  removeAllEventListeners: () => void;
-}
-
 export interface IEventClass {
   events: { [key: string]: EventCall[] };
   addEventListener: (name: string, call: EventCall) => void;
@@ -42,15 +35,12 @@ export interface IEventClass {
   removeAllEventListeners: () => void;
 }
 
-export type Event<T> = IEventClass & T;
 
 /**
  * * * * * * * * * * * * * * * * * * * * * * * * *
  */
 
 export type ReactComponent = React.FunctionComponentFactory<any> | React.ComponentClass;
-// export type ReactComponent = React.FunctionComponnt | React.ComponentClass;
-// export type ReactComponent = React.ReactNode
 
 export interface IModalClass extends Required<Omit<IOptions, 'immediately'>> {
   open: (options?: ICreateModalOptions) => void;

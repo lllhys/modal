@@ -1,4 +1,4 @@
-import { EventCall, IEventClass, IEventFunc, IModal } from '../types';
+import { EventCall, IEventClass } from '../types';
 
 export enum Events {
   BEFORE = 'before',

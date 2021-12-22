@@ -12,7 +12,7 @@ export default defineConfig({
   ],
   mode: 'site',
   base: '/modal',
-  // publicPath: '/静态资源起始路径/',
+  publicPath: '/modal/',
   exportStatic: {}, // 将所有路由输出为 HTML 目录结构，以免刷新页面时 404
   // more config: https://d.umijs.org/config
 });

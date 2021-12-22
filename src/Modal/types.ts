@@ -1,4 +1,5 @@
 import React from 'react';
+import {ModalObject} from "./class/ModalObject";
 
 export interface IModalContainerProps {
   modalMap?: IModalMap;
@@ -111,5 +112,5 @@ export enum ModalState {
 
 export interface IStore extends Required<IModalContainerProps> {
   updaters: React.DispatchWithoutAction[];
-  popList: IModalClass[];
+  popList: ModalObject[];
 }

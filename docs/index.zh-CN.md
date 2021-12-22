@@ -1,13 +1,16 @@
-# @lllhys/modal
+---
+title: Modal
+---
 
-A mobile side modal component, to achieve a complete life cycle of the object, built-in commonly used keyframe animation, while providing an event listener callback.
+# Modal - 弹窗组件
 
-## Docs
+移动端弹窗组件，实现了组件的完整生命周期，内置常用的关键帧动画，同时提供了事件监听回调。
 
-You can see our docs on https://lllhys.github.io/modal/
+## 文档
 
+使用文档： https://lllhys.github.io/modal/
 
-## Install
+## 安装
 
 ```shell
 yarn add @lllhys/modal
@@ -15,10 +18,9 @@ yarn add @lllhys/modal
 npm install @lllhys/modal
 ```
 
-## Usage
+## 使用
 
-This is a simple demonstration of how to use `Modal`, please read the documentation if you want to learn more.[Doc](https://lllhys.github.io/modal/)
-
+这是一个简单的使用 demo，了解更多请移步文档。
 
 ```ts
 import Modal, {ModalContainer, IModalProps} from '@lllhys/modal';

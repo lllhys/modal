@@ -3,8 +3,8 @@ import {defineConfig} from 'dumi';
 export default defineConfig({
   title: 'Modal',
   favicon:
-    'https://user-images.githubusercontent.com/9554297/83762004-a0761b00-a6a9-11ea-83b4-9c8ff721d4b8.png',
-  logo: 'https://user-images.githubusercontent.com/9554297/83762004-a0761b00-a6a9-11ea-83b4-9c8ff721d4b8.png',
+    'http://qnimg.lllhy.com/popcorn-soda.png',
+  logo: 'http://qnimg.lllhy.com/popcorn-soda%20%281%29.png',
   outputPath: 'docs-dist',
   locales: [
     ['en-US', 'English'],
@@ -14,5 +14,12 @@ export default defineConfig({
   base: '/modal',
   publicPath: '/modal/',
   exportStatic: {}, // 将所有路由输出为 HTML 目录结构，以免刷新页面时 404
+  navs: [
+    null, // null 值代表保留约定式生成的导航，只做增量配置
+    {
+      title: 'GitHub',
+      path: 'https://github.com/lllhys/modal',
+    },
+  ],
   // more config: https://d.umijs.org/config
 });

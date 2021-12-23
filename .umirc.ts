@@ -21,5 +21,11 @@ export default defineConfig({
       path: 'https://github.com/lllhys/modal',
     },
   ],
+  resolve: {
+    excludes: ['docs/HomePage']
+  },
+  themeConfig: {
+    carrier: '@lllhys/modal', // 设备状态栏左侧的文本内容
+  }
   // more config: https://d.umijs.org/config
 });

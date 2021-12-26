@@ -1,8 +1,9 @@
 {
   "name": "@lllhys/modal",
-  "version": "0.0.2",
-  "homepage": "https://github.com/lllhys/modal",
+  "version": "0.0.3",
+  "homepage": "https://lllhys.github.io/modal",
   "author": "yiminghe@gmail.com",
+  "keywords": ["react","popup","dialog", "modal", "event","animation", "transition"],
   "repository": {
     "type": "git",
     "url": "git@github.com:lllhys/modal.git"

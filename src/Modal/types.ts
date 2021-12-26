@@ -47,7 +47,7 @@ export interface IModalClass extends Required<Omit<IOptions, 'immediately'>> {
   open: (options?: ICreateModalOptions) => void;
   close: (options?: ICloseModalOptions) => void;
   state: ModalState; // 声明周期
-  changeState: (state: ModalState) => void;
+  // changeState: (state: ModalState) => void;
   options: any | IOptions | undefined; // 211221 临时改为any
   component: ReactComponent;
   id: number;

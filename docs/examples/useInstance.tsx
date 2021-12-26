@@ -39,6 +39,10 @@ const Test = (props: IModalProps) => {
 export default () => {
   const handleClick = () => {
     const modal = Modal.createModal(Test);
+
+    modal.addEventListener('onStateChange', () => {
+      console.log("state change")
+    })
     modal.addEventListener('onOpenStart', () => {
       console.log('onOpenStart');
     });

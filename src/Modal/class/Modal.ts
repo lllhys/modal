@@ -1,14 +1,17 @@
 import {
+  IBaseModalOptions,
   ICloseModalOptions,
   ICreateModalOptions,
-  IModalClass,
+  ModalState,
+  NoneAnimate,
   popProp,
   ReactComponent,
 } from '../types';
-import { ModalObject } from './ModalObject';
+import {ModalObject} from './ModalObject';
 import store from '../../store';
 import './AugmentationModalObject';
 import {getArrayEle} from "../../utils";
+import {visibleStates} from "../index";
 
 namespace Modal {
   export const getModalInstanceByName = (name: string): ModalObject | undefined => {
@@ -34,7 +37,19 @@ namespace Modal {
     return modal;
   };
 
-  const getModalInstance = (pop: popProp, options?: { key?: string }): ModalObject | undefined => {
+  export const getLastVisibleModal = (): ModalObject | undefined => {
+    let result;
+    store.popList.forEach(v => (visibleStates.includes(v.state) && (result = v)))
+    return result;
+  }
+
+  /**
+   *
+   * @param pop
+   * @param options
+   */
+  const getModalInstance = (pop?: popProp, options?: { key?: string }): ModalObject | undefined => {
+    if (!pop) return getLastVisibleModal();
     if (options?.key) return getModalInstanceByKey('key');
     if (typeof pop === 'string') return getModalInstanceByName(pop);
     else return getModalInstanceByPop(pop);
@@ -43,7 +58,7 @@ namespace Modal {
   export function createModal(pop: popProp, options?: ICreateModalOptions): ModalObject {
     // 融合默认参数
     // const _options = {...defaultCreateOptions, ...options};
-    const _options = { ...options };
+    const _options = {...options};
     let com: ReactComponent;
     if (typeof pop === 'string') {
       if (!store.modalMap[pop]) {
@@ -57,7 +72,7 @@ namespace Modal {
   }
 
   export function pushModal(pop: popProp, options?: ICreateModalOptions): ModalObject {
-    const _options = { ...options };
+    const _options = {...options};
 
     const modal = Modal.createModal(pop, options);
     // 立即打开
@@ -65,9 +80,14 @@ namespace Modal {
     return modal;
   }
 
-  export function closeModal(pop: popProp, options?: ICloseModalOptions): ModalObject {
+  /**
+   * close target modal function. if you set pop param to undefined will close the top modal.
+   * @param pop
+   * @param options
+   */
+  export function closeModal(pop?: popProp, options?: ICloseModalOptions): ModalObject {
     // 融合默认参数
-    const _options = { ...options };
+    const _options = {...options};
 
     const modal = getModalInstance(pop, options);
 
@@ -75,8 +95,22 @@ namespace Modal {
       throw Error('Cannot find target modal instance, please check your params');
     }
     // 立即关闭
-    if (_options.immediately !== false) modal.close();
+    if (_options.immediately !== false) modal.close(_options);
     return modal;
+  }
+
+  /**
+   * close all modals
+   * @param options if you want to close all modals immediately you can set immediately to true.
+   */
+  export function closeAllModals(options?: Pick<IBaseModalOptions, 'immediately'>): void {
+    // set the last one have animation and the others close immediately.
+    const immediately = !!options?.immediately;
+    const _popList = store.popList, len = _popList.length;
+    for (let i  = 0; i < len; i++ ) {
+      if (i === len -1 && !immediately) _popList[i].close();
+      else _popList[i].state = ModalState.CLOSED;
+    }
   }
 }
 

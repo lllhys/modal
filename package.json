@@ -1,8 +1,17 @@
 {
   "name": "@lllhys/modal",
-  "version": "0.0.2",
-  "homepage": "https://github.com/lllhys/modal",
-  "author": "yiminghe@gmail.com",
+  "version": "0.1.1",
+  "homepage": "https://lllhys.github.io/modal",
+  "author": "l@lllhy.com",
+  "keywords": [
+    "react",
+    "popup",
+    "dialog",
+    "modal",
+    "event",
+    "animation",
+    "transition"
+  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:lllhys/modal.git"
@@ -46,7 +55,8 @@
     "react-dom": ">=16.4.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.16.5"
+    "@babel/runtime": "^7.16.5",
+    "animate.css": "^4.1.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.15.1",
@@ -59,11 +69,11 @@
     "father": "^2.29.6",
     "father-build": "^1.17.2",
     "gh-pages": "^3.0.0",
+    "less": "^3.12.2",
     "lint-staged": "^10.0.7",
     "prettier": "^2.2.1",
-    "yorkie": "^2.0.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "less": "^3.12.2"
+    "yorkie": "^2.0.0"
   }
 }

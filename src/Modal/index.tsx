@@ -5,9 +5,10 @@ import { defaultModalConfig } from './constants';
 import { getArrayEle } from '../utils';
 import { ModalObject } from './class/ModalObject';
 import "../../assets/index.css";
-import "../../assets/keyframe.css"
+import 'animate.css';
+// import "../../assets/keyframe.css"
 
-const appearStates = [ModalState.SHOW, ModalState.CLOSING, ModalState.OPENING];
+export const visibleStates = [ModalState.SHOW, ModalState.CLOSING, ModalState.OPENING];
 
 const isAnimating = (pop: IModalClass) => {
   return pop.state === ModalState.CLOSING || pop.state === ModalState.OPENING;
@@ -18,8 +19,10 @@ const isAnimating = (pop: IModalClass) => {
  */
 const handleAnimateEnd = (pop: IModalClass) => {
   // console.log('aaaa')
-  if (pop.state === ModalState.OPENING) pop.changeState(ModalState.SHOW);
-  if (pop.state === ModalState.CLOSING) pop.changeState(ModalState.CLOSED);
+  // if (pop.state === ModalState.OPENING) pop.changeState(ModalState.SHOW);
+  // if (pop.state === ModalState.CLOSING) pop.changeState(ModalState.CLOSED);
+  if (pop.state === ModalState.OPENING) pop.state = ModalState.SHOW;
+  if (pop.state === ModalState.CLOSING) pop.state = ModalState.CLOSED;
 };
 
 /**
@@ -61,6 +64,8 @@ const calculateMaskStyle = (pop: IModalClass | IModalConfig) => {
  * @constructor
  */
 const ModalContainer: React.FC<IModalContainerProps> = (props) => {
+  console.log('-----rerender------')
+
   const { popList } = store;
 
   const [zIndex, setZIndex] = useState(defaultModalConfig.zIndex);
@@ -113,7 +118,7 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
   };
 
   const getShowPopList = () => {
-    return popList.filter((v) => appearStates.includes(v.state));
+    return popList.filter((v) => visibleStates.includes(v.state));
     // 以下为旧的单弹窗逻辑，目前重构中
     // if (!store.config.showSingle) return list;
     //

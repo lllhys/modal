@@ -6,7 +6,7 @@ import {
   IModalConfig,
 } from './types';
 
-export const defaultAnimateName = 'zoom{}';
+export const defaultAnimateName = 'zoom*';
 
 export const defaultAnimate: IModalAnimate = {
   duration: 400,

@@ -39,6 +39,10 @@ const Test = (props: IModalProps) => {
 export default () => {
   const handleClick = () => {
     const modal = Modal.createModal(Test);
+
+    modal.addEventListener('onStateChange', () => {
+      console.log("state change")
+    })
     modal.addEventListener('onOpenStart', () => {
       console.log('onOpenStart');
     });
@@ -56,6 +60,7 @@ export default () => {
 
   return (
     <div>
+      <h5>use instance</h5>
       <button onClick={handleClick}>Open new</button>
       <ModalContainer
         config={{

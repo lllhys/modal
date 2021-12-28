@@ -9,7 +9,7 @@ const Test = () => {
     Modal.pushModal('test');
   };
   const handleClickCLose = () => {
-    Modal.closeModal('test', { animate: { name: 'fade{}' } });
+    Modal.closeModal('test', { animate: { name: 'zoomOutUp' } });
   };
   return (
     <div>
@@ -25,11 +25,12 @@ const modalMap = {
 
 export default () => {
   const handleClick = () => {
-    Modal.pushModal('test', { animate: { name: 'fade{}' } });
+    Modal.pushModal('test', { animate: { name: 'fade*' } });
   };
 
   return (
     <div>
+      <h5>use statement</h5>
       <button onClick={handleClick}>打开弹窗</button>
       <ModalContainer modalMap={modalMap} />
     </div>

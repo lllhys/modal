@@ -1,5 +1,5 @@
-import { event, Events, useEvent } from './Events';
-import store, { updateAll } from '../../store';
+import {FunctionEvent, FunctionEventTypes, PropertyEvent, UseEvent} from './Event';
+import store, {updateAll} from '../../store';
 import {
   ICloseModalOptions,
   ICreateModalOptions,
@@ -12,11 +12,11 @@ import {
   NoneAnimate,
   ReactComponent,
 } from '../types';
-import { defaultAnimate, defaultAnimateName, defaultCreateOptions } from '../constants';
+import {defaultAnimate, defaultAnimateName, defaultCreateOptions} from '../constants';
 
 let globalId = 0;
 
-@useEvent
+@UseEvent
 export class ModalObject implements IModalClass {
   component;
   options: any;
@@ -25,12 +25,33 @@ export class ModalObject implements IModalClass {
   key = '`1234567^$%^&%*89hhjkjh'; // 乱写的default key，应该不会有b能取到这个key吧
   animate: IModalAnimate | INoneAnimate = defaultAnimate;
   private animateName = defaultAnimateName; // 动画名备份
-  state = ModalState.INIT;
   mask = true;
   maskClosable = false;
   maskStyle = {};
   zIndex = 1000;
   private asyncCallback: { [key: string]: Function } = {};
+
+  private _state: ModalState = ModalState.INIT;
+
+  get state() {
+    return this._state;
+  }
+
+  @PropertyEvent("state")
+  set state(state: ModalState) {
+    this._state = state;
+    if (this.asyncCallback[state]) {
+      this.asyncCallback[state]();
+      // clear
+      delete this.asyncCallback[state];
+    }
+
+    if (state === ModalState.CLOSED) {
+      // 移除目标
+      store.popList = store.popList.filter((v) => v !== this);
+    }
+    updateAll();
+  }
 
   constructor(com: ReactComponent, options: IOptions) {
     this.component = com;
@@ -43,8 +64,6 @@ export class ModalObject implements IModalClass {
       ...store.config,
       ...options,
     });
-    // 监听组件
-    store.popList.push(this);
     this.state = ModalState.CREATED;
   }
 
@@ -72,7 +91,7 @@ export class ModalObject implements IModalClass {
     }
   }
 
-  @event('Open', [Events.BEFORE, Events.AFTER])
+  @FunctionEvent('Open', [FunctionEventTypes.BEFORE, FunctionEventTypes.AFTER])
   async open(options?: ICreateModalOptions) {
     options && this.setOptions(options);
     if (this.state !== ModalState.CREATED) {
@@ -82,44 +101,68 @@ export class ModalObject implements IModalClass {
       );
       return;
     }
-    this.state = ModalState.OPENING;
+    if (!store.popList.includes(this)) {
+      // 监听组件
+      store.popList.push(this);
+    }
+    // this.state = ModalState.OPENING;
     if (this.animate === NoneAnimate) {
-      this.changeState(ModalState.SHOW);
+      // this.changeState(ModalState.SHOW);
+      this.state = ModalState.SHOW;
     } else {
       await this.showOpenAnimation();
     }
   }
 
-  @event('Close', [Events.BEFORE, Events.AFTER])
+  @FunctionEvent('Close', [FunctionEventTypes.BEFORE, FunctionEventTypes.AFTER])
   async close(options?: ICloseModalOptions) {
     options && this.setOptions(options);
     if (this.animate === NoneAnimate) {
-      this.changeState(ModalState.CLOSED);
+      // this.changeState(ModalState.CLOSED);
+      this.state = ModalState.CLOSED;
     } else {
       await this.showCloseAnimation();
     }
   }
 
-  @event('OpenAnimation', [Events.AFTER, Events.BEFORE])
-  async showOpenAnimation(ani?: IModalAnimate | INoneAnimate) {
+  @FunctionEvent('OpenAnimation', [FunctionEventTypes.AFTER, FunctionEventTypes.BEFORE])
+  private async showOpenAnimation(ani?: IModalAnimate | INoneAnimate) {
     // 异步
     await new Promise((resolve) => {
       if (ani) this.animate = ani;
       // store.popList.push(this);
       this.replaceWildcardAnimation('In');
-      this.changeState(ModalState.OPENING);
       this.asyncCallback[ModalState.SHOW] = resolve;
+      // this.changeState(ModalState.OPENING);
+      this.state = ModalState.OPENING;
+      // 避免animate失效，做容错
+      setTimeout(() => {
+        if (this.state === ModalState.OPENING) {
+          console.error('You may be using the wrong animation name or your device may not be compatible with this library, please check.')
+          this.state = ModalState.SHOW;
+        }
+      }, (this.animate === NoneAnimate? 0 : this.animate.duration!)+ 50)
     });
   }
 
-  @event('CloseAnimation', [Events.AFTER, Events.BEFORE])
-  async showCloseAnimation(ani?: IModalAnimate | INoneAnimate) {
+  @FunctionEvent('CloseAnimation', [FunctionEventTypes.AFTER, FunctionEventTypes.BEFORE])
+  private async showCloseAnimation(ani?: IModalAnimate | INoneAnimate) {
     // 异步
     await new Promise((resolve) => {
+
       if (ani) this.animate = ani;
       this.replaceWildcardAnimation('Out');
-      this.changeState(ModalState.CLOSING);
       this.asyncCallback[ModalState.CLOSED] = resolve;
+      // this.changeState(ModalState.CLOSING);
+      this.state = ModalState.CLOSING;
+
+      // 避免animate失效，做容错
+      setTimeout(() => {
+        if (this.state === ModalState.CLOSING) {
+          console.error('You may be using the wrong animation name or your device may not be compatible with this library, please check.')
+          this.state = ModalState.CLOSED;
+        }
+      }, (this.animate === NoneAnimate? 0 : this.animate.duration!)+ 50)
     });
   }
 
@@ -129,25 +172,36 @@ export class ModalObject implements IModalClass {
     updateAll();
   }
 
-  changeState(state: ModalState) {
-    this.state = state;
-    if (this.asyncCallback[state]) {
-      this.asyncCallback[state]();
-      // clear
-      delete this.asyncCallback[state];
-    }
+  // changeState(state: ModalState) {
+  //   this.state = state;
+  //   if (this.asyncCallback[state]) {
+  //     this.asyncCallback[state]();
+  //     // clear
+  //     delete this.asyncCallback[state];
+  //   }
+  //
+  //   if (state === ModalState.CLOSED) {
+  //     // 移除目标
+  //     store.popList = store.popList.filter((v) => v !== this);
+  //   }
+  //   updateAll();
+  // }
 
-    if (state === ModalState.CLOSED) {
-      // 移除目标
-      store.popList = store.popList.filter((v) => v !== this);
-    }
-    updateAll();
-  }
-
-  replaceWildcardAnimation(stage: 'In' | 'Out') {
+  private replaceWildcardAnimation(stage: 'In' | 'Out') {
     if (this.animate === NoneAnimate) return;
-    const name = this.animateName;
-    if (name.indexOf('{}') !== -1) this.animate.name = name.replace('{}', stage);
+    let name = this.animateName;
+    const wildcardReg = /^(.*){(.+)\|(.+)}(.*)$/;
+    if (/{.*}/.test(name)){
+      const regResult = wildcardReg.exec(name);
+      console.log(regResult);
+      if (regResult){
+        // 处理名称中的{}替换值
+        name = regResult[1] + regResult[stage === 'In'? 2: 3] + regResult[4];
+      }else {
+        throw Error('you use error wildcard animation name, please check again');
+      }
+    }
+    if (name.indexOf('*') !== -1) this.animate.name = name.replace('*', stage);
     if (
       this.options.animate &&
       this.options.animate !== NoneAnimate &&

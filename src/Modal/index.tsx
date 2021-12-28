@@ -5,7 +5,8 @@ import { defaultModalConfig } from './constants';
 import { getArrayEle } from '../utils';
 import { ModalObject } from './class/ModalObject';
 import "../../assets/index.css";
-import "../../assets/keyframe.css"
+import 'animate.css';
+// import "../../assets/keyframe.css"
 
 export const visibleStates = [ModalState.SHOW, ModalState.CLOSING, ModalState.OPENING];
 

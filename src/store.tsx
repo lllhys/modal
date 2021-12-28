@@ -38,7 +38,7 @@ const useUpdate = () => {
   return []
 };
 
-// decorator
+// hoc
 export function makeObserver<T = any>(Com: React.FC<T>) {
   const _new: React.FC<T> = (props) => {
     useUpdate();

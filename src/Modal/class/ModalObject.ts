@@ -187,7 +187,7 @@ export class ModalObject implements IModalClass {
   //   updateAll();
   // }
 
-  replaceWildcardAnimation(stage: 'In' | 'Out') {
+  private replaceWildcardAnimation(stage: 'In' | 'Out') {
     if (this.animate === NoneAnimate) return;
     let name = this.animateName;
     const wildcardReg = /^(.*){(.+)\|(.+)}(.*)$/;

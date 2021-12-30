@@ -34,13 +34,14 @@ export enum EventType {
 
 export interface IEvent {
   type: EventType;
+  value: any;
   target: any;
 }
 
 export type EventCall = (event: IEvent) => void;
 
 export interface IEventClass {
-  events: { [key: string]: EventCall[] };
+  // events: { [key: string]: EventCall[] };
   addEventListener: (name: string, call: EventCall) => void;
   removeEventListener: (name: string, call: EventCall) => void;
   removeAllEventListeners: () => void;

@@ -31,10 +31,12 @@ class Event implements IEvent {
 
   type;
   target;
+  value;
 
-  constructor(type: EventType, target: any) {
+  constructor(type: EventType, target: any, value?: any) {
     this.type = type;
     this.target = target
+    this.value = value
   }
 
 }
@@ -83,17 +85,20 @@ export function FunctionEvent(name: string, events: FunctionEventTypes[]) {
     const row = descriptor.value;
     descriptor.value = async function (...args: any[]) {
       if (events.includes(FunctionEventTypes.BEFORE)) {
+
         // 执行before监听回调
         const beforeName = `on${name}Start`;
+        const e = new Event(beforeName as EventType, this)
         // @ts-ignore
-        this.events?.[beforeName] && this.events[beforeName].forEach((v: Function) => v());
+        this.events?.[beforeName] && this.events[beforeName].forEach((v: Function) => v(e));
       }
       await row.apply(this, args);
       if (events.includes(FunctionEventTypes.AFTER)) {
         // 执行after监听回调
         const afterName = `on${name}End`;
+        const e = new Event(afterName as EventType, this)
         // @ts-ignore
-        this.events?.[afterName] && this.events[afterName].forEach((v: Function) => v());
+        this.events?.[afterName] && this.events[afterName].forEach((v: Function) => v(e));
       }
     };
     return descriptor;
@@ -114,8 +119,9 @@ export function PropertyEvent(name: string) {
     // set 方法覆盖
     descriptor.set = function (newVal: any) {
       // console.log(newVal);
+      const e = new Event(eventName as EventType, this, newVal)
       // @ts-ignore
-      this.events?.[eventName] && this.events[eventName].forEach((v: Function) => v());
+      this.events?.[eventName] && this.events[eventName].forEach((v: Function) => v(e));
       set && set.apply(this, [newVal]);
     }
     return descriptor;

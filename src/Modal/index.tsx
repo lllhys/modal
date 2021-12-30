@@ -64,7 +64,6 @@ const calculateMaskStyle = (pop: IModalClass | IModalConfig) => {
  * @constructor
  */
 const ModalContainer: React.FC<IModalContainerProps> = (props) => {
-  console.log('-----rerender------')
 
   const { popList } = store;
 

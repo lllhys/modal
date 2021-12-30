@@ -17,3 +17,6 @@ order: 4
  - onCloseAnimationStart -> 关闭动画开始播放
  - onCloseAnimationEnd -> 关闭动画播放结束
 
+### demo
+
+<code src='../examples/event.tsx' ></code>

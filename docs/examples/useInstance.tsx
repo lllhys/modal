@@ -60,7 +60,7 @@ export default () => {
 
   return (
     <div>
-      <h5>use instance</h5>
+      <h6>use instance</h6>
       <button onClick={handleClick}>Open new</button>
       <ModalContainer
         config={{

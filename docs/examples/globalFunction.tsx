@@ -3,33 +3,57 @@ import Modal, { ModalContainer, IModalProps } from '@lllhys/modal';
 
 const Test = (props: IModalProps) => {
 
+  const handleOpen = () => {
+    Modal.pushModal(Test, {animate: {
+      name: "zoom*{Left|Right}"
+      }})
+  }
+
+  const handleClose = () => {
+    Modal.closeModal();
+    // or Modal.closeModal(Test);
+    // or props._modal.close();
+  }
+
+  const handleCloseAll = () => {
+    Modal.closeAllModals();
+  }
+
   return (
-    <h3>this is a modal</h3>
+    <>
+      <h6>this is a modal</h6>
+      <button onClick={handleOpen}>openModal</button>
+      <button onClick={handleClose}>closeModal</button>
+      <button onClick={handleCloseAll}>closeAllModals</button>
+    </>
+
   );
 };
 
 export default () => {
 
   const handleCreate = () => {
+    const modal = Modal.createModal(Test, {animate: {name: "flip*{Y|X}"}})
+
+    setTimeout(() => {
+      modal.open();
+    }, 1000)
 
   }
 
   const handleOpen = () => {
-
+    Modal.pushModal(Test)
   }
 
   return (
     <div>
-      <h5>global function use</h5>
+      <h6>global function use</h6>
       <button onClick={handleCreate}>createModal and open(delay 1000)</button>
       <button onClick={handleOpen}>openModal</button>
       <ModalContainer
         config={{
-          showSingle: true,
-          destroyOnInvisible: true,
-          multiMask: true,
           maskStyle: {
-            backgroundColor: 'rgba(0, 100, 100, 0.5)',
+            backgroundColor: 'rgba(200, 200, 100, 0.7)',
           },
         }}
       />

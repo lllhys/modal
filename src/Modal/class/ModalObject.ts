@@ -18,21 +18,31 @@ let globalId = 0;
 
 @UseEvent
 export class ModalObject implements IModalClass {
-  component;
-  options: any;
-  props: any = { _modal: this };
-  id;
-  key = '`1234567^$%^&%*89hhjkjh'; // 乱写的default key，应该不会有b能取到这个key吧
-  animate: IModalAnimate | INoneAnimate = defaultAnimate;
+
+  private readonly _component;
+  private readonly _id;
+  private readonly _key: string = '`1234567^$%^&%*89hhjkjh'; // 乱写的default key，应该不会有b能取到这个key吧
+
+  // 可配置的options and props
+  private _options: any;
+  private _props: any = {_modal: this};
+
+  // configs
+  private _animate: IModalAnimate | INoneAnimate = defaultAnimate;
   private animateName = defaultAnimateName; // 动画名备份
-  mask = true;
-  maskClosable = false;
-  maskStyle = {};
-  zIndex = 1000;
+  private _mask = true;
+  private _maskClosable = false;
+  private _maskStyle = {};
+  private _zIndex = 1000;
   private asyncCallback: { [key: string]: Function } = {};
 
+  // life-circle
   private _state: ModalState = ModalState.INIT;
 
+
+  /**
+   * ------------------------All getter and setters.----------------------------
+   */
   get state() {
     return this._state;
   }
@@ -53,11 +63,51 @@ export class ModalObject implements IModalClass {
     updateAll();
   }
 
-  constructor(com: ReactComponent, options: IOptions) {
-    this.component = com;
-    this.id = globalId++;
+  get options(): any {
+    return this._options;
+  }
+
+  get component() {
+    return this._component;
+  }
+
+  get id() {
+    return this._id;
+  }
+
+  get animate(): IModalAnimate | INoneAnimate {
+    return this._animate;
+  }
+
+  get zIndex(): number {
+    return this._zIndex;
+  }
+
+  get maskStyle(): {} {
+    return this._maskStyle;
+  }
+
+  get maskClosable(): boolean {
+    return this._maskClosable;
+  }
+
+  get mask(): boolean {
+    return this._mask;
+  }
+
+  get props(): any {
+    return this._props;
+  }
+
+  get key(): string {
+    return this._key;
+  }
+
+  constructor(com: ReactComponent, options?: IOptions) {
+    this._component = com;
+    this._id = globalId++;
     // key 不允许二次副职
-    options?.key && (this.key = options.key);
+    options?.key && (this._key = options.key);
     // 融合全局配置与默认配置
     this.setOptions({
       ...defaultCreateOptions,
@@ -68,24 +118,24 @@ export class ModalObject implements IModalClass {
   }
 
   setOptions(options: IOptionsExceptKey) {
-    this.options = options;
+    this._options = options;
     const singleAndNotMulti = store.config.showSingle && !store.config.multiMask;
     // console.log("singleAndNotMulti", singleAndNotMulti)
     // props 处理
-    options.props && (this.props = { ...this.props, ...options.props });
+    options.props && (this._props = {...this._props, ...options.props});
     // mask 处理
-    options.mask !== undefined && (this.mask = singleAndNotMulti ? false : options.mask);
+    options.mask !== undefined && (this._mask = singleAndNotMulti ? false : options.mask);
     // mask closable
-    options.maskClosable !== undefined && (this.maskClosable = options.maskClosable);
+    options.maskClosable !== undefined && (this._maskClosable = options.maskClosable);
     // style
-    options.maskStyle && (this.maskStyle = options.maskStyle);
+    options.maskStyle && (this._maskStyle = options.maskStyle);
     // z index
-    options.zIndex !== undefined && (this.zIndex = options.zIndex);
+    options.zIndex !== undefined && (this._zIndex = options.zIndex);
     // 动画处理
     if (options.animate) {
-      if (options.animate === NoneAnimate) this.animate = this.animateName = NoneAnimate;
+      if (options.animate === NoneAnimate) this._animate = this.animateName = NoneAnimate;
       else {
-        this.animate = { ...defaultAnimate, ...options.animate };
+        this._animate = {...defaultAnimate, ...options.animate};
         this.animateName = options.animate.name;
       }
     }
@@ -94,7 +144,7 @@ export class ModalObject implements IModalClass {
   @FunctionEvent('Open', [FunctionEventTypes.BEFORE, FunctionEventTypes.AFTER])
   async open(options?: ICreateModalOptions) {
     options && this.setOptions(options);
-    if (this.state !== ModalState.CREATED) {
+    if (this.state !== ModalState.CREATED && this.state !== ModalState.CLOSED) {
       console.warn(
         'This modal is already visible, calling the open method again will not take effect.',
         this,
@@ -106,7 +156,7 @@ export class ModalObject implements IModalClass {
       store.popList.push(this);
     }
     // this.state = ModalState.OPENING;
-    if (this.animate === NoneAnimate) {
+    if (this._animate === NoneAnimate) {
       // this.changeState(ModalState.SHOW);
       this.state = ModalState.SHOW;
     } else {
@@ -117,7 +167,7 @@ export class ModalObject implements IModalClass {
   @FunctionEvent('Close', [FunctionEventTypes.BEFORE, FunctionEventTypes.AFTER])
   async close(options?: ICloseModalOptions) {
     options && this.setOptions(options);
-    if (this.animate === NoneAnimate) {
+    if (this._animate === NoneAnimate) {
       // this.changeState(ModalState.CLOSED);
       this.state = ModalState.CLOSED;
     } else {
@@ -129,7 +179,7 @@ export class ModalObject implements IModalClass {
   private async showOpenAnimation(ani?: IModalAnimate | INoneAnimate) {
     // 异步
     await new Promise((resolve) => {
-      if (ani) this.animate = ani;
+      if (ani) this._animate = ani;
       // store.popList.push(this);
       this.replaceWildcardAnimation('In');
       this.asyncCallback[ModalState.SHOW] = resolve;
@@ -138,10 +188,10 @@ export class ModalObject implements IModalClass {
       // 避免animate失效，做容错
       setTimeout(() => {
         if (this.state === ModalState.OPENING) {
-          console.error('You may be using the wrong animation name or your device may not be compatible with this library, please check.')
+          console.error(`You may be using the wrong animation name ${this.animateName} -> ${this.animate === NoneAnimate ? NoneAnimate : this.animate.name} or your device may not be compatible with this library, please check.`)
           this.state = ModalState.SHOW;
         }
-      }, (this.animate === NoneAnimate? 0 : this.animate.duration!)+ 50)
+      }, (this._animate === NoneAnimate ? 0 : this._animate.duration!) + 50)
     });
   }
 
@@ -150,7 +200,7 @@ export class ModalObject implements IModalClass {
     // 异步
     await new Promise((resolve) => {
 
-      if (ani) this.animate = ani;
+      if (ani) this._animate = ani;
       this.replaceWildcardAnimation('Out');
       this.asyncCallback[ModalState.CLOSED] = resolve;
       // this.changeState(ModalState.CLOSING);
@@ -159,15 +209,15 @@ export class ModalObject implements IModalClass {
       // 避免animate失效，做容错
       setTimeout(() => {
         if (this.state === ModalState.CLOSING) {
-          console.error('You may be using the wrong animation name or your device may not be compatible with this library, please check.')
+          console.error(`You may be using the wrong animation name ${this.animateName} or your device may not be compatible with this library, please check.`)
           this.state = ModalState.CLOSED;
         }
-      }, (this.animate === NoneAnimate? 0 : this.animate.duration!)+ 50)
+      }, (this._animate === NoneAnimate ? 0 : this._animate.duration!) + 50)
     });
   }
 
-  modifyProps(newProps: any) {
-    this.props = { ...this.props, ...newProps };
+  setProps<T = any>(newProps: T) {
+    this._props = {...this._props, ...newProps};
     // 更新一下
     updateAll();
   }
@@ -188,26 +238,29 @@ export class ModalObject implements IModalClass {
   // }
 
   private replaceWildcardAnimation(stage: 'In' | 'Out') {
-    if (this.animate === NoneAnimate) return;
+    if (this._animate === NoneAnimate) return;
     let name = this.animateName;
     const wildcardReg = /^(.*){(.+)\|(.+)}(.*)$/;
-    if (/{.*}/.test(name)){
+    if (/{.*}/.test(name)) {
       const regResult = wildcardReg.exec(name);
-      console.log(regResult);
-      if (regResult){
+      // console.log(regResult);
+      if (regResult) {
+
         // 处理名称中的{}替换值
-        name = regResult[1] + regResult[stage === 'In'? 2: 3] + regResult[4];
-      }else {
+        name = regResult[1] + regResult[stage === 'In' ? 2 : 3] + regResult[4];
+        // console.log(name)
+      } else {
         throw Error('you use error wildcard animation name, please check again');
       }
     }
-    if (name.indexOf('*') !== -1) this.animate.name = name.replace('*', stage);
+    if (name.indexOf('*') !== -1) name = name.replace('*', stage);
+    this._animate.name = name;
     if (
-      this.options.animate &&
-      this.options.animate !== NoneAnimate &&
-      !this.options.animate.timingFunction
+      this._options.animate &&
+      this._options.animate !== NoneAnimate &&
+      !this._options.animate.timingFunction
     ) {
-      this.options.animate.timingFunction = 'ease-' + stage.toLowerCase();
+      this._animate.timingFunction = 'ease-' + stage.toLowerCase();
     }
   }
 }

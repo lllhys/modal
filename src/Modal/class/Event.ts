@@ -1,10 +1,9 @@
-import {EventCall, IEvent, IEventClass, IEventType} from '../types';
+import {EventCall, IEvent, IEventClass, EventType} from '../types';
 import {firstToUpper} from "../../utils";
 
 export enum FunctionEventTypes {
   BEFORE = 'before',
   AFTER = 'after',
-
 }
 
 interface IEventListeners {
@@ -33,7 +32,7 @@ class Event implements IEvent {
   type;
   target;
 
-  constructor(type: IEventType, target: any) {
+  constructor(type: EventType, target: any) {
     this.type = type;
     this.target = target
   }

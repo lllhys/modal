@@ -20,10 +20,20 @@ export interface IModalConfig {
 }
 
 
-export interface IEventType {}
+export enum EventType {
+  ON_STATE_CHANGE= 'onStateChange',
+  ON_OPEN_START = "onOpenStart",
+  ON_OPEN_END = 'onOpenEnd',
+  ON_OPEN_ANIMATION_START = 'onOpenAnimationStart',
+  ON_OPEN_ANIMATION_END = 'onOpenAnimationEnd',
+  ON_CLOSE_START = 'onCloseStart',
+  ON_CLOSE_END = 'onCloseEnd',
+  ON_CLOSE_ANIMATION_START = 'onCloseAnimationStart',
+  ON_CLOSE_ANIMATION_END = 'onCloseAnimationEnd'
+}
 
 export interface IEvent {
-  type: IEventType;
+  type: EventType;
   target: any;
 }
 

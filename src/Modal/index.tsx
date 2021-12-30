@@ -150,7 +150,7 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
 
     const switchAni =
       options?.switchType &&
-      (options.switchType === 'in' ? 'fadeIn 500ms forwards' : 'fadeOut 500ms forwards');
+      (options.switchType === 'in' ? 'fadeIn 300ms forwards' : 'fadeOut 500ms forwards');
 
     return {
       className: `modal-container ${calculateMaskAnimation(pop)} ${mask && 'modal-mask'}`,

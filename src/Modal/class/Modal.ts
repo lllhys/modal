@@ -50,7 +50,7 @@ namespace Modal {
    */
   const getModalInstance = (pop?: popProp, options?: { key?: string }): ModalObject | undefined => {
     if (!pop) return getLastVisibleModal();
-    if (options?.key) return getModalInstanceByKey('key');
+    if (options?.key) return getModalInstanceByKey(options.key);
     if (typeof pop === 'string') return getModalInstanceByName(pop);
     else return getModalInstanceByPop(pop);
   };

@@ -2,8 +2,8 @@ import {defineConfig} from 'dumi';
 
 export default defineConfig({
   title: 'Modal',
-  favicon: 'images/logo.png',
-  logo: 'images/logo.png',
+  favicon: '/modal/images/logo.png',
+  logo: '/modal/images/logo.png',
   outputPath: 'docs-dist',
   locales: [
     ['en-US', 'English'],

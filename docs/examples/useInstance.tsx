@@ -41,8 +41,8 @@ export default () => {
     const modal = Modal.createModal(Test);
 
     modal.addEventListener('onStateChange', () => {
-      console.log("state change")
-    })
+      console.log('state change');
+    });
     modal.addEventListener('onOpenStart', () => {
       console.log('onOpenStart');
     });

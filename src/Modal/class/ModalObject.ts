@@ -1,5 +1,5 @@
-import {FunctionEvent, FunctionEventTypes, PropertyEvent, UseEvent} from './Event';
-import store, {updateAll} from '../../store';
+import { FunctionEvent, FunctionEventTypes, PropertyEvent, UseEvent } from './Event';
+import store, { updateAll } from '../../store';
 import {
   ICloseModalOptions,
   ICreateModalOptions,
@@ -12,20 +12,19 @@ import {
   NoneAnimate,
   ReactComponent,
 } from '../types';
-import {defaultAnimate, defaultAnimateName, defaultCreateOptions} from '../constants';
+import { defaultAnimate, defaultAnimateName, defaultCreateOptions } from '../constants';
 
 let globalId = 0;
 
 @UseEvent
 export class ModalObject implements IModalClass {
-
   private readonly _component;
   private readonly _id;
-  private readonly _key: string = '`1234567^$%^&%*89hhjkjh'; // 乱写的default key，应该不会有b能取到这个key吧
+  private readonly _key: string = '`1234567^$%^&%*89jkjh'; // 乱写的default key，应该不会有b能取到这个key吧
 
   // 可配置的options and props
   private _options: any;
-  private _props: any = {_modal: this};
+  private _props: any = { _modal: this };
 
   // configs
   private _animate: IModalAnimate | INoneAnimate = defaultAnimate;
@@ -36,9 +35,8 @@ export class ModalObject implements IModalClass {
   private _zIndex = 1000;
   private asyncCallback: { [key: string]: Function } = {};
 
-  // life-circle
+  // life-circle state
   private _state: ModalState = ModalState.INIT;
-
 
   /**
    * ------------------------All getter and setters.----------------------------
@@ -47,7 +45,7 @@ export class ModalObject implements IModalClass {
     return this._state;
   }
 
-  @PropertyEvent("state")
+  @PropertyEvent('state')
   set state(state: ModalState) {
     this._state = state;
     if (this.asyncCallback[state]) {
@@ -122,7 +120,7 @@ export class ModalObject implements IModalClass {
     const singleAndNotMulti = store.config.showSingle && !store.config.multiMask;
     // console.log("singleAndNotMulti", singleAndNotMulti)
     // props 处理
-    options.props && (this._props = {...this._props, ...options.props});
+    options.props && (this._props = { ...this._props, ...options.props });
     // mask 处理
     options.mask !== undefined && (this._mask = singleAndNotMulti ? false : options.mask);
     // mask closable
@@ -135,7 +133,7 @@ export class ModalObject implements IModalClass {
     if (options.animate) {
       if (options.animate === NoneAnimate) this._animate = this.animateName = NoneAnimate;
       else {
-        this._animate = {...defaultAnimate, ...options.animate};
+        this._animate = { ...defaultAnimate, ...options.animate };
         this.animateName = options.animate.name;
       }
     }
@@ -188,10 +186,14 @@ export class ModalObject implements IModalClass {
       // 避免animate失效，做容错
       setTimeout(() => {
         if (this.state === ModalState.OPENING) {
-          console.error(`You may be using the wrong animation name ${this.animateName} -> ${this.animate === NoneAnimate ? NoneAnimate : this.animate.name} or your device may not be compatible with this library, please check.`)
+          console.error(
+            `You may be using the wrong animation name ${this.animateName} -> ${
+              this.animate === NoneAnimate ? NoneAnimate : this.animate.name
+            } or your device may not be compatible with this library, please check.`,
+          );
           this.state = ModalState.SHOW;
         }
-      }, (this._animate === NoneAnimate ? 0 : this._animate.duration!) + 50)
+      }, (this._animate === NoneAnimate ? 0 : this._animate.duration!) + 50);
     });
   }
 
@@ -199,7 +201,6 @@ export class ModalObject implements IModalClass {
   private async showCloseAnimation(ani?: IModalAnimate | INoneAnimate) {
     // 异步
     await new Promise((resolve) => {
-
       if (ani) this._animate = ani;
       this.replaceWildcardAnimation('Out');
       this.asyncCallback[ModalState.CLOSED] = resolve;
@@ -209,15 +210,17 @@ export class ModalObject implements IModalClass {
       // 避免animate失效，做容错
       setTimeout(() => {
         if (this.state === ModalState.CLOSING) {
-          console.error(`You may be using the wrong animation name ${this.animateName} or your device may not be compatible with this library, please check.`)
+          console.error(
+            `You may be using the wrong animation name ${this.animateName} or your device may not be compatible with this library, please check.`,
+          );
           this.state = ModalState.CLOSED;
         }
-      }, (this._animate === NoneAnimate ? 0 : this._animate.duration!) + 50)
+      }, (this._animate === NoneAnimate ? 0 : this._animate.duration!) + 50);
     });
   }
 
   setProps<T = any>(newProps: T) {
-    this._props = {...this._props, ...newProps};
+    this._props = { ...this._props, ...newProps };
     // 更新一下
     updateAll();
   }
@@ -245,7 +248,6 @@ export class ModalObject implements IModalClass {
       const regResult = wildcardReg.exec(name);
       // console.log(regResult);
       if (regResult) {
-
         // 处理名称中的{}替换值
         name = regResult[1] + regResult[stage === 'In' ? 2 : 3] + regResult[4];
         // console.log(name)

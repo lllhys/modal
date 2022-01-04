@@ -1,5 +1,5 @@
 import React from 'react';
-import {ModalObject} from "./class/ModalObject";
+import type { ModalObject } from './class/ModalObject';
 
 export interface IModalContainerProps {
   modalMap?: IModalMap;
@@ -19,17 +19,16 @@ export interface IModalConfig {
   destroyOnInvisible?: boolean;
 }
 
-
 export enum EventType {
-  ON_STATE_CHANGE= 'onStateChange',
-  ON_OPEN_START = "onOpenStart",
+  ON_STATE_CHANGE = 'onStateChange',
+  ON_OPEN_START = 'onOpenStart',
   ON_OPEN_END = 'onOpenEnd',
   ON_OPEN_ANIMATION_START = 'onOpenAnimationStart',
   ON_OPEN_ANIMATION_END = 'onOpenAnimationEnd',
   ON_CLOSE_START = 'onCloseStart',
   ON_CLOSE_END = 'onCloseEnd',
   ON_CLOSE_ANIMATION_START = 'onCloseAnimationStart',
-  ON_CLOSE_ANIMATION_END = 'onCloseAnimationEnd'
+  ON_CLOSE_ANIMATION_END = 'onCloseAnimationEnd',
 }
 
 export interface IEvent {
@@ -46,7 +45,6 @@ export interface IEventClass {
   removeEventListener: (name: string, call: EventCall) => void;
   removeAllEventListeners: () => void;
 }
-
 
 /**
  * * * * * * * * * * * * * * * * * * * * * * * * *

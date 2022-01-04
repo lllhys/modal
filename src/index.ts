@@ -4,7 +4,7 @@ import './Modal/class/AugmentationModalObject';
 
 export * from './Modal/types';
 export { ModalObject } from './Modal/class/ModalObject';
-export {IModalProps} from './Modal'
+export { IModalProps } from './Modal';
 export * from './Modal/constants';
 
 export { ModalContainer };

@@ -7,11 +7,11 @@ import {
   popProp,
   ReactComponent,
 } from '../types';
-import {ModalObject} from './ModalObject';
+import { ModalObject } from './ModalObject';
 import store from '../../store';
 import './AugmentationModalObject';
-import {getArrayEle} from "../../utils";
-import {visibleStates} from "../index";
+import { getArrayEle } from '../../utils';
+import { visibleStates } from '../index';
 
 namespace Modal {
   export const getModalInstanceByName = (name: string): ModalObject | undefined => {
@@ -39,9 +39,9 @@ namespace Modal {
 
   export const getLastVisibleModal = (): ModalObject | undefined => {
     let result;
-    store.popList.forEach(v => (visibleStates.includes(v.state) && (result = v)))
+    store.popList.forEach((v) => visibleStates.includes(v.state) && (result = v));
     return result;
-  }
+  };
 
   /**
    *
@@ -58,7 +58,7 @@ namespace Modal {
   export function createModal(pop: popProp, options?: ICreateModalOptions): ModalObject {
     // 融合默认参数
     // const _options = {...defaultCreateOptions, ...options};
-    const _options = {...options};
+    const _options = { ...options };
     let com: ReactComponent;
     if (typeof pop === 'string') {
       if (!store.modalMap[pop]) {
@@ -72,7 +72,7 @@ namespace Modal {
   }
 
   export function pushModal(pop: popProp, options?: ICreateModalOptions): ModalObject {
-    const _options = {...options};
+    const _options = { ...options };
 
     const modal = Modal.createModal(pop, options);
     // 立即打开
@@ -87,7 +87,7 @@ namespace Modal {
    */
   export function closeModal(pop?: popProp, options?: ICloseModalOptions): ModalObject {
     // 融合默认参数
-    const _options = {...options};
+    const _options = { ...options };
 
     const modal = getModalInstance(pop, options);
 
@@ -106,9 +106,10 @@ namespace Modal {
   export function closeAllModals(options?: Pick<IBaseModalOptions, 'immediately'>): void {
     // set the last one have animation and the others close immediately.
     const immediately = !!options?.immediately;
-    const _popList = store.popList, len = _popList.length;
-    for (let i  = 0; i < len; i++ ) {
-      if (i === len -1 && !immediately) _popList[i].close();
+    const _popList = store.popList,
+      len = _popList.length;
+    for (let i = 0; i < len; i++) {
+      if (i === len - 1 && !immediately) _popList[i].close();
       else _popList[i].state = ModalState.CLOSED;
     }
   }

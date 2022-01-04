@@ -1,4 +1,4 @@
-import {defineConfig} from 'dumi';
+import { defineConfig } from 'dumi';
 
 export default defineConfig({
   title: 'Modal',
@@ -21,10 +21,10 @@ export default defineConfig({
     },
   ],
   resolve: {
-    excludes: ['docs/HomePage']
+    excludes: ['docs/HomePage'],
   },
   themeConfig: {
     carrier: '@lllhys/modal', // 设备状态栏左侧的文本内容
-  }
+  },
   // more config: https://d.umijs.org/config
 });

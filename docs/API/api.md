@@ -15,7 +15,4 @@
 
 asdfasdfasdf
 
-
 <API src="../../src/Modal/index.tsx"></API>
-
-

@@ -1,11 +1,11 @@
-import { IStore } from './Modal/types';
+import type { IStore } from './Modal/types';
 import React, { useReducer } from 'react';
-import {ModalObject} from "./Modal/class/ModalObject";
+import type { ModalObject } from './Modal/class/ModalObject';
 
 const store: IStore = {
   updaters: [],
   popList: new Proxy([] as ModalObject[], {
-    set(target, p, value, receiver) {
+    set(target, p, value) {
       // console.log('type=======', p);
       // console.log("set监听", target, p, value, receiver);
 
@@ -35,7 +35,7 @@ const useUpdate = () => {
     // 注册进入store
     store.updaters.push(forceUpdate);
   }
-  return []
+  return [];
 };
 
 // hoc

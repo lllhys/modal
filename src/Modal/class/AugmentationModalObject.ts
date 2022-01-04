@@ -1,5 +1,4 @@
-import { ModalObject } from './ModalObject';
-import { EventCall } from '../types';
+import type { EventCall } from '../types';
 
 declare module './ModalObject' {
   interface ModalObject {

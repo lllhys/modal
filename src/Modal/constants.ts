@@ -1,10 +1,4 @@
-import {
-  IBaseModalOptions,
-  ICloseModalOptions,
-  ICreateModalOptions,
-  IModalAnimate,
-  IModalConfig,
-} from './types';
+import type { ICloseModalOptions, ICreateModalOptions, IModalAnimate, IModalConfig } from './types';
 
 export const defaultAnimateName = 'zoom*';
 

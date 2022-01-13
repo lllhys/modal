@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { IModalClass, IModalConfig, IModalContainerProps, ModalState, NoneAnimate } from './types';
+import type { IModalClass, IModalConfig, IModalContainerProps } from './types';
+import { ModalState, NoneAnimate } from './types';
 import store, { makeObserver } from '../store';
 import { defaultModalConfig } from './constants';
 import { getArrayEle } from '../utils';
-import { ModalObject } from './class/ModalObject';
+import type { ModalObject } from './class/ModalObject';
 import '../../assets/index.css';
 import 'animate.css';
 // import "../../assets/keyframe.css"
@@ -107,6 +108,7 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
    * @param pop
    */
   const handleMaskClick = (e: React.MouseEvent, pop: IModalClass) => {
+    console.log('aaaa', pop.maskClosable, pop);
     if (pop.maskClosable) {
       pop.close();
     }
@@ -152,7 +154,7 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
       style: options?.invisible
         ? { display: 'none' }
         : { ...calculateMaskStyle(pop), animation: switchAni },
-      onClick: (e: React.MouseEvent) => handleMaskClick(e, pop),
+      onMouseUpCapture: (e: React.MouseEvent) => handleMaskClick(e, pop),
       key: pop.id,
     };
   };

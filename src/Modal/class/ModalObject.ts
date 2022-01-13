@@ -1,6 +1,6 @@
 import { FunctionEvent, FunctionEventTypes, PropertyEvent, UseEvent } from './Event';
 import store, { updateAll } from '../../store';
-import {
+import type {
   ICloseModalOptions,
   ICreateModalOptions,
   IModalAnimate,
@@ -8,11 +8,11 @@ import {
   INoneAnimate,
   IOptions,
   IOptionsExceptKey,
-  ModalState,
-  NoneAnimate,
   ReactComponent,
 } from '../types';
+import { ModalState, NoneAnimate } from '../types';
 import { defaultAnimate, defaultAnimateName, defaultCreateOptions } from '../constants';
+import type React from 'react';
 
 let globalId = 0;
 
@@ -33,7 +33,7 @@ export class ModalObject implements IModalClass {
   private _maskClosable = false;
   private _maskStyle = {};
   private _zIndex = 1000;
-  private asyncCallback: { [key: string]: Function } = {};
+  private asyncCallback: Record<string, CallableFunction> = {};
 
   // life-circle state
   private _state: ModalState = ModalState.INIT;
@@ -81,7 +81,7 @@ export class ModalObject implements IModalClass {
     return this._zIndex;
   }
 
-  get maskStyle(): {} {
+  get maskStyle(): React.CSSProperties {
     return this._maskStyle;
   }
 

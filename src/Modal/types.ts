@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import type { ModalObject } from './class/ModalObject';
 
 export interface IModalContainerProps {
@@ -6,9 +6,7 @@ export interface IModalContainerProps {
   config?: IModalConfig;
 }
 
-export interface IModalMap {
-  [modalName: string]: ReactComponent;
-}
+export type IModalMap = Record<string, ReactComponent>;
 
 export interface IModalConfig {
   showSingle?: boolean;
@@ -75,7 +73,7 @@ export const NoneAnimate = 'none';
  * 弹窗配置基类型
  */
 export interface IBaseModalOptions {
-  props?: Object;
+  props?: Record<any, any>;
   key?: string;
   immediately?: boolean;
   animate?: IModalAnimate | INoneAnimate;

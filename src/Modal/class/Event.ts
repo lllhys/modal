@@ -6,9 +6,7 @@ export enum FunctionEventTypes {
   AFTER = 'after',
 }
 
-interface IEventListeners {
-  [name: string]: EventCall[];
-}
+type IEventListeners = Record<string, EventCall[]>;
 
 /**
  * get event from target object.
@@ -44,7 +42,7 @@ class Event implements IEvent {
  */
 export function UseEvent<T extends { new (...args: any[]): any }>(Target: T) {
   return class extends Target implements IEventClass {
-    events: { [key: string]: EventCall[] } = {};
+    events: Record<string, EventCall[]> = {};
 
     addEventListener(name: string, call: EventCall) {
       if (!this.events) this.events = {};
@@ -82,16 +80,17 @@ export function FunctionEvent(name: string, events: FunctionEventTypes[]) {
         const beforeName = `on${name}Start`;
         const e = new Event(beforeName as EventType, this);
         // @ts-ignore
-        this.events?.[beforeName] && this.events[beforeName].forEach((v: Function) => v(e));
+        this.events?.[beforeName] && this.events[beforeName].forEach((v: EventCall) => v(e));
       }
-      await row.apply(this, args);
+      const result = await row.apply(this, args);
       if (events.includes(FunctionEventTypes.AFTER)) {
         // 执行after监听回调
         const afterName = `on${name}End`;
         const e = new Event(afterName as EventType, this);
         // @ts-ignore
-        this.events?.[afterName] && this.events[afterName].forEach((v: Function) => v(e));
+        this.events?.[afterName] && this.events[afterName].forEach((v: EventCall) => v(e));
       }
+      return result;
     };
     return descriptor;
   };
@@ -111,7 +110,7 @@ export function PropertyEvent(name: string) {
       // console.log(newVal);
       const e = new Event(eventName as EventType, this, newVal);
       // @ts-ignore
-      this.events?.[eventName] && this.events[eventName].forEach((v: Function) => v(e));
+      this.events?.[eventName] && this.events[eventName].forEach((v: EventCall) => v(e));
       set && set.apply(this, [newVal]);
     };
     return descriptor;

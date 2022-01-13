@@ -1,19 +1,26 @@
-import {
+import type {
   IBaseModalOptions,
   ICloseModalOptions,
   ICreateModalOptions,
-  ModalState,
-  NoneAnimate,
   popProp,
   ReactComponent,
 } from '../types';
+import { ModalState } from '../types';
 import { ModalObject } from './ModalObject';
 import store from '../../store';
 import './AugmentationModalObject';
 import { getArrayEle } from '../../utils';
 import { visibleStates } from '../index';
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace Modal {
+  export const getModalInstanceByPop = (pop: ReactComponent): ModalObject | undefined => {
+    let modal = getArrayEle(store.popList, -1);
+    store.popList.forEach((v) => {
+      v.component === pop && (modal = v);
+    });
+    return modal;
+  };
   export const getModalInstanceByName = (name: string): ModalObject | undefined => {
     if (!store.modalMap[name]) {
       throw new Error(
@@ -21,13 +28,6 @@ namespace Modal {
       );
     }
     return getModalInstanceByPop(store.modalMap[name]);
-  };
-  export const getModalInstanceByPop = (pop: ReactComponent): ModalObject | undefined => {
-    let modal = getArrayEle(store.popList, -1);
-    store.popList.forEach((v) => {
-      v.component === pop && (modal = v);
-    });
-    return modal;
   };
   export const getModalInstanceByKey = (key: string): ModalObject | undefined => {
     let modal;

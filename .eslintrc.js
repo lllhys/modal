@@ -10,6 +10,14 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-empty-interface': 0,
     '@typescript-eslint/no-inferrable-types': 0,
+    '@typescript-eslint/no-unused-expressions': [
+      'error',
+      {
+        allowShortCircuit: true,
+        allowTernary: true,
+        allowTaggedTemplates: true,
+      },
+    ],
     'react/require-default-props': 0,
     'no-confusing-arrow': 0,
     'import/no-named-as-default-member': 0,

@@ -15,6 +15,12 @@ export interface IModalConfig {
   maskStyle?: React.CSSProperties;
   multiMask?: boolean;
   destroyOnInvisible?: boolean;
+  bgAnimation?: boolean | IModalAnimate | INoneAnimate;
+}
+
+export enum SwitchType {
+  IN = 'In',
+  OUT = 'Out',
 }
 
 export enum EventType {

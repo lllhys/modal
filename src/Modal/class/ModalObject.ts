@@ -10,9 +10,10 @@ import type {
   IOptionsExceptKey,
   ReactComponent,
 } from '../types';
-import { ModalState, NoneAnimate } from '../types';
+import { ModalState, NoneAnimate, SwitchType } from '../types';
 import { defaultAnimate, defaultAnimateName, defaultCreateOptions } from '../constants';
 import type React from 'react';
+import { replaceWildcard } from '../../utils';
 
 let globalId = 0;
 
@@ -179,7 +180,7 @@ export class ModalObject implements IModalClass {
     await new Promise((resolve) => {
       if (ani) this._animate = ani;
       // store.popList.push(this);
-      this.replaceWildcardAnimation('In');
+      this.replaceWildcardAnimation(SwitchType.IN);
       this.asyncCallback[ModalState.SHOW] = resolve;
       // this.changeState(ModalState.OPENING);
       this.state = ModalState.OPENING;
@@ -202,7 +203,7 @@ export class ModalObject implements IModalClass {
     // 异步
     await new Promise((resolve) => {
       if (ani) this._animate = ani;
-      this.replaceWildcardAnimation('Out');
+      this.replaceWildcardAnimation(SwitchType.OUT);
       this.asyncCallback[ModalState.CLOSED] = resolve;
       // this.changeState(ModalState.CLOSING);
       this.state = ModalState.CLOSING;
@@ -225,6 +226,33 @@ export class ModalObject implements IModalClass {
     updateAll();
   }
 
+  private replaceWildcardAnimation(stage: SwitchType) {
+    if (this._animate === NoneAnimate) return;
+    // let name = this.animateName;
+    // const wildcardReg = /^(.*){(.+)\|(.+)}(.*)$/;
+    // if (/{.*}/.test(name)) {
+    //   const regResult = wildcardReg.exec(name);
+    //   // console.log(regResult);
+    //   if (regResult) {
+    //     // 处理名称中的{}替换值
+    //     name = regResult[1] + regResult[stage === 'In' ? 2 : 3] + regResult[4];
+    //     // console.log(name)
+    //   } else {
+    //     throw Error('you use error wildcard animation name, please check again');
+    //   }
+    // }
+    // if (name.indexOf('*') !== -1) name = name.replace('*', stage);
+
+    this._animate.name = replaceWildcard(this.animateName, stage);
+    if (
+      this._options.animate &&
+      this._options.animate !== NoneAnimate &&
+      !this._options.animate.timingFunction
+    ) {
+      this._animate.timingFunction = 'ease-' + stage.toLowerCase();
+    }
+  }
+
   // changeState(state: ModalState) {
   //   this.state = state;
   //   if (this.asyncCallback[state]) {
@@ -239,30 +267,4 @@ export class ModalObject implements IModalClass {
   //   }
   //   updateAll();
   // }
-
-  private replaceWildcardAnimation(stage: 'In' | 'Out') {
-    if (this._animate === NoneAnimate) return;
-    let name = this.animateName;
-    const wildcardReg = /^(.*){(.+)\|(.+)}(.*)$/;
-    if (/{.*}/.test(name)) {
-      const regResult = wildcardReg.exec(name);
-      // console.log(regResult);
-      if (regResult) {
-        // 处理名称中的{}替换值
-        name = regResult[1] + regResult[stage === 'In' ? 2 : 3] + regResult[4];
-        // console.log(name)
-      } else {
-        throw Error('you use error wildcard animation name, please check again');
-      }
-    }
-    if (name.indexOf('*') !== -1) name = name.replace('*', stage);
-    this._animate.name = name;
-    if (
-      this._options.animate &&
-      this._options.animate !== NoneAnimate &&
-      !this._options.animate.timingFunction
-    ) {
-      this._animate.timingFunction = 'ease-' + stage.toLowerCase();
-    }
-  }
 }

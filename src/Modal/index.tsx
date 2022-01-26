@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import type { IModalClass, IModalConfig, IModalContainerProps } from './types';
-import { ModalState, NoneAnimate } from './types';
+import { ModalState, NoneAnimate, SwitchType } from './types';
 import store, { makeObserver } from '../store';
 import { defaultModalConfig } from './constants';
-import { getArrayEle } from '../utils';
+import { getArrayEle, replaceWildcard } from '../utils';
 import type { ModalObject } from './class/ModalObject';
 import '../../assets/index.css';
 import 'animate.css';
@@ -18,7 +18,9 @@ const isAnimating = (pop: IModalClass) => {
 /**
  * animate end 处理， 切换对象生命状态
  */
-const handleAnimateEnd = (pop: IModalClass) => {
+const handleAnimationEnd = (e: React.AnimationEvent, pop: IModalClass) => {
+  // @ts-ignore
+  if (e.target.id !== `ModalBody_${pop.id}`) return;
   // console.log('aaaa')
   // if (pop.state === ModalState.OPENING) pop.changeState(ModalState.SHOW);
   // if (pop.state === ModalState.CLOSING) pop.changeState(ModalState.CLOSED);
@@ -42,9 +44,24 @@ const calculateBodyAnimation = (pop: IModalClass) => {
  * @param pop
  */
 const calculateMaskAnimation = (pop: IModalClass) => {
-  if (pop.state === ModalState.OPENING) return 'modal-zoom-in';
-  if (pop.state === ModalState.CLOSING) return 'modal-zoom-out';
-  return '';
+  const switchAni: { animation?: string } = {};
+  if (
+    store.config.bgAnimation &&
+    store.config.bgAnimation !== NoneAnimate &&
+    store.config.bgAnimation !== true
+  ) {
+    if (pop.state === ModalState.OPENING)
+      switchAni.animation = `${replaceWildcard(store.config.bgAnimation.name, SwitchType.IN)} ${
+        store.config.bgAnimation.duration
+      }ms forwards`;
+    if (pop.state === ModalState.CLOSING)
+      switchAni.animation = `${replaceWildcard(store.config.bgAnimation.name, SwitchType.OUT)} ${
+        store.config.bgAnimation.duration
+      }ms forwards`;
+  }
+
+  // console.log(switchAni);
+  return switchAni;
 };
 
 /**
@@ -58,6 +75,11 @@ const calculateMaskStyle = (pop: IModalClass | IModalConfig) => {
   return style;
 };
 
+const initConfigProp = (config: IModalConfig | undefined) => {
+  store.config = { ...defaultModalConfig, ...config };
+  if (typeof config?.bgAnimation === 'boolean')
+    store.config.bgAnimation = config.bgAnimation ? defaultModalConfig.bgAnimation : NoneAnimate;
+};
 /**
  * ModalContainer 组件
  * @param props
@@ -75,7 +97,7 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
   }, [props.modalMap]);
 
   useEffect(() => {
-    store.config = { ...defaultModalConfig, ...props.config };
+    initConfigProp(props.config);
     setZIndex(store.config.zIndex);
   }, [props.config]);
 
@@ -108,7 +130,7 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
    * @param pop
    */
   const handleMaskClick = (e: React.MouseEvent, pop: IModalClass) => {
-    console.log('aaaa', pop.maskClosable, pop);
+    // console.log('aaaa', pop.maskClosable, pop);
     if (pop.maskClosable) {
       pop.close();
     }
@@ -141,19 +163,15 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
    */
   const generateMaskProps = (
     pop: IModalClass,
-    options?: { invisible?: boolean; switchType?: 'in' | 'out' },
+    options?: { invisible?: boolean; switchType?: SwitchType },
   ) => {
     const mask = pop.mask !== undefined ? pop.mask : store.config.mask;
 
-    const switchAni =
-      options?.switchType &&
-      (options.switchType === 'in' ? 'fadeIn 300ms forwards' : 'fadeOut 500ms forwards');
-
     return {
-      className: `modal-container ${calculateMaskAnimation(pop)} ${mask && 'modal-mask'}`,
+      className: `modal-container ${mask && 'modal-mask'}`,
       style: options?.invisible
         ? { display: 'none' }
-        : { ...calculateMaskStyle(pop), animation: switchAni },
+        : { ...calculateMaskStyle(pop), ...calculateMaskAnimation(pop) },
       onMouseUpCapture: (e: React.MouseEvent) => handleMaskClick(e, pop),
       key: pop.id,
     };
@@ -163,7 +181,7 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
     return {
       className: `modal-body`,
       style: { animation: calculateBodyAnimation(pop) },
-      onAnimationEnd: () => handleAnimateEnd(pop),
+      onAnimationEnd: (e: React.AnimationEvent) => handleAnimationEnd(e, pop),
       onClickCapture: (e: React.MouseEvent) => preventClick(e, pop),
       onMouseDownCapture: (e: React.MouseEvent) => preventClick(e, pop),
       onMouseUpCapture: (e: React.MouseEvent) => preventClick(e, pop),
@@ -202,14 +220,11 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
     //       style: options?.invisible ? {display: 'none'} : {...calculateMaskStyle(pop), animation: switchAni},
     return (
       <section
-        style={singleAndNotMulti ? calculateMaskStyle(config) : {}}
-        className={
-          singleAndNotMulti
-            ? `modal-container ${calculateMaskAnimation(showPopList[0])} ${
-                config.mask && 'modal-mask'
-              }`
-            : ''
-        }
+        style={{
+          ...(singleAndNotMulti ? calculateMaskStyle(config) : {}),
+          ...calculateMaskAnimation(showPopList[0]),
+        }}
+        className={singleAndNotMulti ? `modal-container ${config.mask && 'modal-mask'}` : ''}
       >
         {_showPopList.map((pop, index) => {
           const Pop = pop.component;
@@ -220,8 +235,8 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
                 switchType:
                   lastAnimateType && index === len - effectiveNum
                     ? last.state === ModalState.OPENING
-                      ? 'out'
-                      : 'in'
+                      ? SwitchType.OUT
+                      : SwitchType.IN
                     : undefined,
               })}
             >
@@ -243,8 +258,8 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
     return showPopList.map((pop) => {
       const Pop = pop.component;
       return (
-        <section {...generateMaskProps(pop)}>
-          <div {...generateBodyProp(pop)}>
+        <section id={`Modal_${pop.id}`} {...generateMaskProps(pop)}>
+          <div id={`ModalBody_${pop.id}`} {...generateBodyProp(pop)}>
             {/*{{...Pop, props: pop.props}}*/}
             <Pop {...pop.props} />
           </div>

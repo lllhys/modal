@@ -32,4 +32,8 @@ export const defaultModalConfig: IModalConfig = {
   },
   multiMask: false,
   destroyOnInvisible: false,
+  bgAnimation: {
+    name: 'fade*',
+    duration: 400,
+  },
 };

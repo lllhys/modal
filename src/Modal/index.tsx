@@ -4,7 +4,7 @@ import store, { makeObserver } from '../store';
 import { defaultModalConfig } from './constants';
 import { getArrayEle } from '../utils';
 import { ModalObject } from './class/ModalObject';
-import "../../assets/index.css";
+import '../../assets/index.css';
 import 'animate.css';
 // import "../../assets/keyframe.css"
 
@@ -49,14 +49,14 @@ const calculateMaskAnimation = (pop: IModalClass) => {
 /**
  * 计算弹窗蒙层style
  * @param pop
+ * @param renderMask
  */
-const calculateMaskStyle = (pop: IModalClass | IModalConfig) => {
+const calculateMaskStyle = (pop: IModalClass | IModalConfig, renderMask: boolean = true) => {
   let style: React.CSSProperties = {};
-  if (pop.mask && pop.maskStyle) style = { ...pop.maskStyle };
+  if (renderMask && pop.mask && pop.maskStyle) style = { ...pop.maskStyle };
   if (pop.zIndex !== undefined) style.zIndex = pop.zIndex;
   return style;
 };
-
 
 /**
  * ModalContainer 组件
@@ -64,7 +64,6 @@ const calculateMaskStyle = (pop: IModalClass | IModalConfig) => {
  * @constructor
  */
 const ModalContainer: React.FC<IModalContainerProps> = (props) => {
-
   const { popList } = store;
 
   const [zIndex, setZIndex] = useState(defaultModalConfig.zIndex);
@@ -79,8 +78,6 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
     store.config = { ...defaultModalConfig, ...props.config };
     setZIndex(store.config.zIndex);
   }, [props.config]);
-
-
 
   /**
    * 弹窗关闭过程中阻止点击事件捕获
@@ -151,11 +148,13 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
       options?.switchType &&
       (options.switchType === 'in' ? 'fadeIn 300ms forwards' : 'fadeOut 500ms forwards');
 
+    const singleAndNotMulti = store.config.showSingle && !store.config.multiMask;
+
     return {
       className: `modal-container ${calculateMaskAnimation(pop)} ${mask && 'modal-mask'}`,
       style: options?.invisible
         ? { display: 'none' }
-        : { ...calculateMaskStyle(pop), animation: switchAni },
+        : { ...calculateMaskStyle(pop, singleAndNotMulti), animation: switchAni },
       onClick: (e: React.MouseEvent) => handleMaskClick(e, pop),
       key: pop.id,
     };
@@ -262,6 +261,6 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
   );
 };
 
-export type IModalProps<T= any> = { _modal: ModalObject } & T;
+export type IModalProps<T = any> = { _modal: ModalObject } & T;
 
 export default makeObserver<IModalContainerProps>(ModalContainer);

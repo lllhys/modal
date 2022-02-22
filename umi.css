@@ -1,4 +1,4 @@
-.modal-container{position:fixed;top:0;bottom:0;right:0;left:0;z-index:3000}.modal-body{position:fixed;top:0;bottom:0;right:0;left:0}.modal-mask{background-color:rgba(0,0,0,.8)}.modal-zoom-in{animation:modal-animate-in .3s ease-in forwards}.modal-zoom-out{animation:modal-animate-out .3s ease-out forwards}@keyframes modal-animate-in{0%{opacity:0}to{opacity:1}}@keyframes modal-animate-out{0%{opacity:1}to{opacity:0}}/*!
+.modal-container{position:fixed;top:0;bottom:0;right:0;left:0;z-index:3000}.modal-body{position:fixed;top:0;bottom:0;right:0;left:0}.modal-zoom-in{animation:modal-animate-in .3s ease-in forwards}.modal-zoom-out{animation:modal-animate-out .3s ease-out forwards}@keyframes modal-animate-in{0%{opacity:0}to{opacity:1}}@keyframes modal-animate-out{0%{opacity:1}to{opacity:0}}/*!
  * animate.css - https://animate.style/
  * Version - 4.1.1
  * Licensed under the MIT license - http://opensource.org/licenses/MIT

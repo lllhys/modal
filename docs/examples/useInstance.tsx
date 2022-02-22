@@ -1,14 +1,18 @@
-import React, { useRef } from 'react';
-import Modal, { ModalContainer, IModalProps } from '@lllhys/modal';
+import React  from 'react';
+import Modal, { ModalContainer, ModalProps } from '@lllhys/modal';
 
-const Test = (props: IModalProps) => {
+Modal.init();
+
+const Test = (props: ModalProps) => {
+  console.log(props);
   const handleClick = () => {
     // Open a new modal and set maskStyle attr.
     // 打开一个新的弹窗
-    const modal = Modal.pushModal(Test, {
+    Modal.openModal(Test, {
       maskStyle: {
         backgroundColor: 'rgba(183,170,24,0.5)',
       },
+      maskClosable: true,
     });
   };
   const handleClickCLose = () => {
@@ -40,6 +44,8 @@ export default () => {
   const handleClick = () => {
     const modal = Modal.createModal(Test);
 
+    console.log(modal);
+
     modal.addEventListener('onStateChange', () => {
       console.log('state change');
     });
@@ -64,9 +70,9 @@ export default () => {
       <button onClick={handleClick}>Open new</button>
       <ModalContainer
         config={{
-          showSingle: true,
-          destroyOnInvisible: true,
-          multiMask: true,
+          showSingleModal: true,
+          destroyOnInvisible: false,
+          showSingleMask: true,
           maskStyle: {
             backgroundColor: 'rgba(0, 100, 100, 0.5)',
           },

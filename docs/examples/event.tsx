@@ -1,7 +1,8 @@
-import Modal, { EventType, IEvent, IModalProps, ModalContainer, ModalObject } from '@lllhys/modal';
+import type { ModalProps, ModalEvent } from '@lllhys/modal';
+import { ModalContainer, ModalObject, EventType } from '@lllhys/modal';
 import React, { useRef } from 'react';
 
-const Test = (props: IModalProps<any>) => {
+const Test = (props: ModalProps<any>) => {
   const handleClickCLose = () => {
     props._modal.close();
   };
@@ -16,12 +17,14 @@ export default () => {
   const modalRef = useRef<ModalObject>();
 
   const handleCreate = () => {
-    const modal = (modalRef.current = new ModalObject(Test, { animate: { name: 'flip*{Y|X}' } }));
+    const modal = (modalRef.current = new ModalObject(Test, {
+      bodyAnimation: { name: 'flip*{Y|X}' },
+    }));
     modal.addEventListener(EventType.ON_STATE_CHANGE, (e) => {
       console.log(e.type, e.value);
     });
 
-    const callback = (e: IEvent) => {
+    const callback = (e: ModalEvent) => {
       console.log(e.type, e.target);
     };
 
@@ -46,9 +49,8 @@ export default () => {
 
       <ModalContainer
         config={{
-          showSingle: true,
+          showSingleModal: true,
           destroyOnInvisible: true,
-          multiMask: true,
           maskStyle: {
             backgroundColor: 'rgba(0, 100, 100, 0.5)',
           },

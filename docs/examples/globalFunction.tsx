@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
-import Modal, { ModalContainer, IModalProps } from '@lllhys/modal';
+import Modal, { ModalContainer, ModalProps } from '@lllhys/modal';
 
-const Test = (props: IModalProps) => {
+const Test = (props: ModalProps) => {
   const handleOpen = () => {
-    Modal.pushModal(Test, {
-      animate: {
+    Modal.openModal(Test, {
+      bodyAnimation: {
         name: 'zoom*{Left|Right}',
       },
     });
@@ -32,7 +32,7 @@ const Test = (props: IModalProps) => {
 
 export default () => {
   const handleCreate = () => {
-    const modal = Modal.createModal(Test, { animate: { name: 'flip*{Y|X}' } });
+    const modal = Modal.createModal(Test, { bodyAnimation: { name: 'flip*{Y|X}' } });
 
     setTimeout(() => {
       modal.open();
@@ -40,7 +40,7 @@ export default () => {
   };
 
   const handleOpen = () => {
-    Modal.pushModal(Test);
+    Modal.openModal(Test);
   };
 
   return (

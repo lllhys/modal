@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
-import Modal, { ModalContainer, IModalProps, ModalObject } from '@lllhys/modal';
+import Modal, { ModalContainer, ModalProps, ModalObject } from '@lllhys/modal';
 
-const Test = (props: IModalProps<{ text?: string }>) => {
+const Test = (props: ModalProps<{ text?: string }>) => {
   console.log('rerender', props);
   const handleOpen = () => {
-    Modal.pushModal(Test, {
-      animate: {
+    Modal.openModal(Test, {
+      bodyAnimation: {
         name: 'zoom*{Left|Right}',
       },
     });
@@ -40,7 +40,7 @@ export default () => {
   const modalRef = useRef<ModalObject>();
 
   const handleCreate = () => {
-    modalRef.current = new ModalObject(Test, { animate: { name: 'flip*{Y|X}' } });
+    modalRef.current = new ModalObject(Test, { bodyAnimation: { name: 'flip*{Y|X}' } });
   };
 
   const handleOpen = () => {

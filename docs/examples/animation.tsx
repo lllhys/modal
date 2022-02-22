@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
-import Modal, { ModalContainer, IModalProps } from '@lllhys/modal';
+import React from 'react';
+import Modal, { ModalContainer, ModalProps } from '@lllhys/modal';
 
-const Test = (props: IModalProps) => {
+const Test = (props: ModalProps) => {
   const handleClose = () => {
     props._modal.close();
   };
@@ -16,26 +16,33 @@ const Test = (props: IModalProps) => {
 
 export default () => {
   const handleOpen1 = () => {
-    Modal.pushModal(Test, {
-      animate: { name: 'fade*' },
+    Modal.openModal(Test, {
+      bodyAnimation: { name: 'fade*' },
     });
   };
 
   const handleOpen2 = () => {
-    Modal.pushModal(Test, {
-      animate: { name: 'slide*{Up|Down}' },
+    Modal.openModal(Test, {
+      bodyAnimation: { name: 'slide*{Up|Down}' },
     });
   };
 
   const handleOpen3 = () => {
-    Modal.pushModal(Test, {
-      animate: { name: '{jello|wobble}' },
+    Modal.openModal(Test, {
+      bodyAnimation: { name: '{jello|wobble}' },
     });
   };
 
   return (
     <div>
       <h6>use animation</h6>
+      <h6>use animation</h6>
+      <h6>use animation</h6>
+      <h6>use animation</h6>
+      <h6>use animation</h6>
+      <h6>use animation</h6>
+      <h6>use animation</h6>
+
       <button onClick={handleOpen1}>open fade*</button>
       <button onClick={handleOpen2}>open {`slide*{Up|Down}`}</button>
       <button onClick={handleOpen3}>open {`{jello|wobble}`}</button>

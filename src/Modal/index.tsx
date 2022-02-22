@@ -154,7 +154,7 @@ const ModalContainer: React.FC<IModalContainerProps> = (props) => {
       className: `modal-container ${calculateMaskAnimation(pop)} ${mask && 'modal-mask'}`,
       style: options?.invisible
         ? { display: 'none' }
-        : { ...calculateMaskStyle(pop, singleAndNotMulti), animation: switchAni },
+        : { ...calculateMaskStyle(pop, !singleAndNotMulti), animation: switchAni },
       onClick: (e: React.MouseEvent) => handleMaskClick(e, pop),
       key: pop.id,
     };

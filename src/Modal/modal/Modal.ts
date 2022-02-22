@@ -13,7 +13,7 @@ import type {
 import { ModalState } from './types';
 import { defaultGlobalModalConfig, invisibleStates } from '../constants';
 import ReactDOM from 'react-dom';
-import ModalContainer from '../components/ModalContainer';
+import ModalContainer from './components/ModalContainer';
 import React from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -87,7 +87,6 @@ namespace Modal {
   /**
    * close target modal function. if you set pop param to undefined will close the top modal.
    * @param pop
-   * @param key
    * @param options
    */
   export function closeModal(
@@ -122,6 +121,10 @@ namespace Modal {
     }
   }
 
+  /**
+   * 全局更新config
+   * @param config
+   */
   export function setGlobalConfig(config: ModalGlobalConfig) {
     store.config = { ...defaultGlobalModalConfig, ...config };
   }

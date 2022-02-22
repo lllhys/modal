@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { makeObserver } from '../store/store';
-import {
-  defaultGlobalModalConfig,
-  defaultHideAnimation,
-  invisibleStates,
-  modalAnimationStage,
-} from '../constants';
-import type { ModalObject } from '../modal/ModalObject';
+import React, { useEffect } from 'react';
+import { makeObserver } from '../../store/store';
+import { defaultHideAnimation, invisibleStates, modalAnimationStage } from '../../constants';
+import type { ModalObject } from '../ModalObject';
+import { NoneAnimation } from '../ModalOption';
+import type { ModalContainerProps } from '../types';
+import { AnimationStage, ModalState } from '../types';
+import Modal from '../Modal';
+import store from '../../store';
+
 import './index.css';
 import 'animate.css';
-import store from '../store';
-import { NoneAnimation } from '../modal/ModalOption';
-import { AnimationStage, ModalContainerProps, ModalGlobalConfig, ModalState } from '../modal/types';
-// import "../../assets/keyframe.css"
 
 /**
  * 弹窗关闭过程中阻止点击事件捕获
@@ -36,15 +33,10 @@ const handleModalClick = (e: React.MouseEvent, modal: ModalObject) => {
   }
 };
 
-// /**
-//  * 弹窗蒙层点击事件
-//  * @param e
-//  * @param modal
-//  */
-// const handleMaskClick = (e: React.MouseEvent, modal: ModalObject) => {
-//
-// };
-
+/**
+ * 弹窗点击handler
+ * @param modal
+ */
 const generateBodyClickHandlers = (modal: ModalObject) => {
   const clickHandler = (e: React.MouseEvent) => handleModalClick(e, modal);
   return {
@@ -56,14 +48,6 @@ const generateBodyClickHandlers = (modal: ModalObject) => {
     onMouseDown: clickHandler,
   };
 };
-
-const initConfigProp = (config: ModalGlobalConfig | undefined) => {
-  store.config = { ...defaultGlobalModalConfig, ...config };
-};
-
-// const inAnimating = (modal: ModalObject) => {
-//   return animatingStates.includes(modal.state);
-// };
 
 const getModalAnimationStage = (modal: ModalObject) => {
   return modalAnimationStage[modal.state];
@@ -83,6 +67,11 @@ const handleAnimationEnd = (e: React.AnimationEvent, modal: ModalObject) => {
   if (modal.state === ModalState.CLOSING) modal.state = ModalState.CLOSED;
 };
 
+/**
+ * 动画
+ * @param modal
+ * @param type
+ */
 const generateAnimation = (modal: ModalObject, type: 'body' | 'mask') => {
   if (
     modal.state === ModalState.SHOW ||
@@ -104,6 +93,10 @@ const generateAnimation = (modal: ModalObject, type: 'body' | 'mask') => {
   else return animation.getAnimationStyle(stage);
 };
 
+/**
+ * 生成body组件的参数
+ * @param modal
+ */
 const generateBodyProps = (modal: ModalObject) => {
   return {
     className: `modal-body`,
@@ -113,19 +106,12 @@ const generateBodyProps = (modal: ModalObject) => {
   };
 };
 
+/**
+ * 获取可显示列表
+ */
 const getShowPopList = () => {
   return store.modalList.filter((v) => !invisibleStates.includes(v.state));
 };
-//
-// const generateMaskProps = (modal: ModalObject, stage?: AnimationStage) => {
-//   return {
-//     className: `modal-mask`,
-//     style: {
-//       ...modal.option.maskStyle,
-//       animation: generateAnimation(modal, 'mask', stage),
-//     },
-//   };
-// };
 
 /**
  * ModalContainer 组件
@@ -134,8 +120,6 @@ const getShowPopList = () => {
  */
 const ModalContainer: React.FC<ModalContainerProps> = (props) => {
   // const { modalList } = store;
-
-  const [zIndex, setZIndex] = useState(defaultGlobalModalConfig.zIndex);
 
   const showPopList = getShowPopList();
 
@@ -146,17 +130,20 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
 
   useEffect(() => {
     store.hasInit = true;
+    return () => {
+      store.hasInit = false;
+    };
   }, []);
 
   useEffect(() => {
     if (!props.modalMap) return;
     // 更新store的modalMap
-    store.modalMap = props.modalMap;
+    Modal.setGlobalModalMap(props.modalMap);
   }, [props.modalMap]);
 
   useEffect(() => {
-    initConfigProp(props.config);
-    setZIndex(store.config.zIndex);
+    if (!props.config) return;
+    Modal.setGlobalConfig(props.config);
   }, [props.config]);
 
   const renderModal = (modal: ModalObject, index: number) => {
@@ -211,7 +198,7 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
     });
   };
 
-  return <section style={{ zIndex }}>{renderAllModals()}</section>;
+  return <section style={{ zIndex: store.config.zIndex }}>{renderAllModals()}</section>;
 };
 
 export type ModalProps<T = any> = { _modal: ModalObject } & T;

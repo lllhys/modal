@@ -1,25 +1,29 @@
-import type {
-  IBaseModalOptions,
-  ICloseModalOptions,
-  ICreateModalOptions,
-  popProp,
-  ReactComponent,
-} from '../types';
-import { ModalState } from '../types';
 import { ModalObject } from './ModalObject';
-import store from '../../store';
 import './AugmentationModalObject';
 import { getArrayEle } from '../../utils';
-import { visibleStates } from '../index';
+import store from '../store';
+import type {
+  ModalCreateOptions,
+  ModalGlobalConfig,
+  ModalMap,
+  ModalPopType,
+  ModalUpdateOptions,
+  ReactComponent,
+} from './types';
+import { ModalState } from './types';
+import { defaultGlobalModalConfig, invisibleStates } from '../constants';
+import ReactDOM from 'react-dom';
+import ModalContainer from '../components/ModalContainer';
+import React from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 namespace Modal {
-  export const getModalInstanceByPop = (pop: ReactComponent): ModalObject | undefined => {
-    let modal = getArrayEle(store.popList, -1);
-    store.popList.forEach((v) => {
-      v.component === pop && (modal = v);
+  export const getModalInstanceByMap = (modal: ReactComponent): ModalObject | undefined => {
+    let lastModal = getArrayEle(store.modalList, -1);
+    store.modalList.forEach((v) => {
+      v.bodyComponent === modal && (lastModal = v);
     });
-    return modal;
+    return lastModal;
   };
   export const getModalInstanceByName = (name: string): ModalObject | undefined => {
     if (!store.modalMap[name]) {
@@ -27,11 +31,11 @@ namespace Modal {
         'Unable to find the corresponding popover component. You must make sure ModalMap is registered in ModalContainer when using the name pop.',
       );
     }
-    return getModalInstanceByPop(store.modalMap[name]);
+    return getModalInstanceByMap(store.modalMap[name]);
   };
   export const getModalInstanceByKey = (key: string): ModalObject | undefined => {
     let modal;
-    store.popList.forEach((v) => {
+    store.modalList.forEach((v) => {
       v.key === key && (modal = v);
     });
     return modal;
@@ -39,23 +43,23 @@ namespace Modal {
 
   export const getLastVisibleModal = (): ModalObject | undefined => {
     let result;
-    store.popList.forEach((v) => visibleStates.includes(v.state) && (result = v));
+    store.modalList.forEach((v) => !invisibleStates.includes(v.state) && (result = v));
     return result;
   };
 
   /**
    *
    * @param pop
-   * @param options
+   * @param key
    */
-  const getModalInstance = (pop?: popProp, options?: { key?: string }): ModalObject | undefined => {
+  const getModalInstance = (pop?: ModalPopType, key?: string): ModalObject | undefined => {
     if (!pop) return getLastVisibleModal();
-    if (options?.key) return getModalInstanceByKey(options.key);
+    if (key) return getModalInstanceByKey(key);
     if (typeof pop === 'string') return getModalInstanceByName(pop);
-    else return getModalInstanceByPop(pop);
+    else return getModalInstanceByMap(pop);
   };
 
-  export function createModal(pop: popProp, options?: ICreateModalOptions): ModalObject {
+  export function createModal(pop: ModalPopType, options?: ModalCreateOptions): ModalObject {
     // 融合默认参数
     // const _options = {...defaultCreateOptions, ...options};
     const _options = { ...options };
@@ -71,7 +75,7 @@ namespace Modal {
     return new ModalObject(com, _options);
   }
 
-  export function pushModal(pop: popProp, options?: ICreateModalOptions): ModalObject {
+  export function openModal(pop: ModalPopType, options?: ModalCreateOptions): ModalObject {
     const _options = { ...options };
 
     const modal = Modal.createModal(pop, options);
@@ -83,13 +87,17 @@ namespace Modal {
   /**
    * close target modal function. if you set pop param to undefined will close the top modal.
    * @param pop
+   * @param key
    * @param options
    */
-  export function closeModal(pop?: popProp, options?: ICloseModalOptions): ModalObject {
+  export function closeModal(
+    pop?: ModalPopType,
+    options?: ModalUpdateOptions & { key?: string },
+  ): ModalObject {
     // 融合默认参数
     const _options = { ...options };
 
-    const modal = getModalInstance(pop, options);
+    const modal = getModalInstance(pop, options?.key);
 
     if (!modal) {
       throw Error('Cannot find target modal instance, please check your params');
@@ -103,15 +111,33 @@ namespace Modal {
    * close all modals
    * @param options if you want to close all modals immediately you can set immediately to true.
    */
-  export function closeAllModals(options?: Pick<IBaseModalOptions, 'immediately'>): void {
+  export function closeAllModals(options?: Pick<ModalUpdateOptions, 'immediately'>): void {
     // set the last one have animation and the others close immediately.
     const immediately = !!options?.immediately;
-    const _popList = store.popList,
-      len = _popList.length;
+    const _modalList = store.modalList,
+      len = _modalList.length;
     for (let i = 0; i < len; i++) {
-      if (i === len - 1 && !immediately) _popList[i].close();
-      else _popList[i].state = ModalState.CLOSED;
+      if (i === len - 1 && !immediately) _modalList[i].close();
+      else _modalList[i].state = ModalState.CLOSED;
     }
+  }
+
+  export function setGlobalConfig(config: ModalGlobalConfig) {
+    store.config = { ...defaultGlobalModalConfig, ...config };
+  }
+
+  export function setGlobalModalMap(map: ModalMap) {
+    store.modalMap = map;
+  }
+
+  export function init(config?: ModalGlobalConfig, map?: ModalMap) {
+    if (store.hasInit) throw new Error('Global container already exists, no need to init again');
+    // 全局挂载
+    const target = document.body.appendChild(document.createElement('div'));
+    ReactDOM.render(
+      React.createElement(ModalContainer, { modalMap: map, config: config }, null),
+      target,
+    );
   }
 }
 

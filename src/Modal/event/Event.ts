@@ -1,4 +1,4 @@
-import type { EventCall, IEvent, IEventClass, EventType } from '../types';
+import type { EventCall, ModalEvent, EventClass, EventType } from './types';
 import { firstToUpper } from '../../utils';
 
 export enum FunctionEventTypes {
@@ -24,7 +24,7 @@ const getEventListener = (
   return _r.length ? _r[0] : undefined;
 };
 
-class Event implements IEvent {
+class Event implements ModalEvent {
   type;
   target;
   value;
@@ -41,7 +41,7 @@ class Event implements IEvent {
  * @param Target
  */
 export function UseEvent<T extends { new (...args: any[]): any }>(Target: T) {
-  return class extends Target implements IEventClass {
+  return class extends Target implements EventClass {
     events: Record<string, EventCall[]> = {};
 
     addEventListener(name: string, call: EventCall) {

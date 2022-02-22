@@ -1,11 +1,11 @@
-import ModalContainer from './Modal';
-import Modal from './Modal/class/Modal';
-import './Modal/class/AugmentationModalObject';
+import ModalContainer from './Modal/components/ModalContainer';
+import Modal from './Modal/modal/Modal';
 
-export * from './Modal/types';
-export { ModalObject } from './Modal/class/ModalObject';
-export { IModalProps } from './Modal';
+export { ModalObject } from './Modal/modal/ModalObject';
+export { ModalProps } from './Modal/components/ModalContainer';
 export * from './Modal/constants';
+export * from './Modal/modal/types';
+export * from './Modal/event/types';
 
 export { ModalContainer };
 export default Modal;

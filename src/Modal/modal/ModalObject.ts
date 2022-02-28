@@ -1,8 +1,7 @@
 import { FunctionEvent, FunctionEventTypes, PropertyEvent, UseEvent } from '../event/Event';
 import type { ModalCreateOptions, ModalUpdateOptions, ReactComponent } from './types';
 import { ModalState } from './types';
-import { StoreModalList } from '../store';
-import { updateAll } from '../store/store';
+import { StoreModalList, updateAll } from '../store';
 import { ModalOptions, NoneAnimation } from './ModalOption';
 import type ModalAnimation from './ModalAnimation';
 
@@ -110,7 +109,7 @@ export class ModalObject {
       StoreModalList.push(this);
       // store.modalList.push(this);
     }
-    const _options = this.options;
+    const _options = this._options;
     if (
       options?.immediately ||
       (_options.bodyAnimation === NoneAnimation && _options.maskAnimation === NoneAnimation)
@@ -125,7 +124,7 @@ export class ModalObject {
   @FunctionEvent('Close', [FunctionEventTypes.BEFORE, FunctionEventTypes.AFTER])
   async close(options?: Omit<ModalUpdateOptions, 'zIndex'>) {
     options && this._options.updateOptions(options);
-    const _options = this.options;
+    const _options = this._options;
     if (
       _options.immediately ||
       (_options.bodyAnimation === NoneAnimation && _options.maskAnimation === NoneAnimation)
@@ -149,7 +148,7 @@ export class ModalObject {
 
   private async handleAnimation(stage: 'open' | 'close') {
     const onState = stage === 'open' ? ModalState.OPENING : ModalState.CLOSING;
-    const doneState = stage === 'open' ? ModalState.SHOW : ModalState.CREATED;
+    const doneState = stage === 'open' ? ModalState.SHOW : ModalState.CLOSED;
     // 异步
     await new Promise((resolve) => {
       // store.popList.push(this);
@@ -177,6 +176,8 @@ export class ModalObject {
 
   setOptions(options: ModalUpdateOptions) {
     this._options.updateOptions(options);
+    // 更新一下
+    updateAll();
   }
 
   // private replaceWildcardAnimation(stage: SwitchType) {

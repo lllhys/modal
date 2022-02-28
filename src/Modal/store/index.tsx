@@ -1,16 +1,16 @@
-import { updateAll } from './store';
-import type React from 'react';
+import React from 'react';
 import type { ModalObject } from '../modal/ModalObject';
 import type { ModalContainerProps } from '../modal/types';
 import { ModalGlobalConfig, ModalState } from '../modal/types';
 import { getArrayEle } from '../../utils';
 import { defaultGlobalModalConfig } from '../constants';
+import { useReducer } from 'react';
 
 export interface IStore extends Required<ModalContainerProps> {
   config: Required<ModalGlobalConfig>;
   updaters: React.DispatchWithoutAction[];
   modalList: ModalObject[];
-  hasInit: boolean;
+  hasInit: number;
 }
 
 const store: IStore = {
@@ -31,7 +31,7 @@ const store: IStore = {
   }),
   modalMap: {},
   config: defaultGlobalModalConfig,
-  hasInit: false,
+  hasInit: 0,
 };
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -73,6 +73,31 @@ export namespace StoreModalList {
     // store.modalList.splice(modalIndex, 1);
     store.modalList = store.modalList.filter((v) => v.id !== modal.id);
   }
+}
+
+export function updateAll() {
+  store.updaters.map((v) => v());
+}
+
+const useUpdate = () => {
+  const [, forceUpdate] = useReducer((s) => s + 1, 0);
+
+  if (!store.updaters.includes(forceUpdate)) {
+    // 注册进入store
+    store.updaters.push(forceUpdate);
+  }
+  return [];
+};
+
+// hoc
+export function makeObserver<T = any>(Com: React.FC<T>) {
+  const _new: React.FC<T> = (props) => {
+    useUpdate();
+
+    return <Com {...props} />;
+  };
+
+  return React.memo(_new);
 }
 
 export default store;

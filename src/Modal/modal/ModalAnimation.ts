@@ -1,7 +1,14 @@
 import type { Animation } from './types';
 import { AnimationStage } from './types';
 import { checkHasWildcard, replaceWildcard } from '../../utils';
-import { defaultAnimationConfig } from '../constants';
+
+export const defaultAnimateName = 'zoom*';
+
+export const defaultAnimationConfig = {
+  duration: 400,
+  name: defaultAnimateName,
+  timingFunction: '',
+};
 
 export default class ModalAnimation {
   duration: number = 2000;

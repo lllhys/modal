@@ -1,14 +1,6 @@
 import { AnimationStage, ModalState } from './modal/types';
 import React from 'react';
-import ModalAnimation from './modal/ModalAnimation';
-
-export const defaultAnimateName = 'zoom*';
-
-export const defaultAnimationConfig = {
-  duration: 400,
-  name: defaultAnimateName,
-  timingFunction: '',
-};
+import ModalAnimation, { defaultAnimationConfig } from './modal/ModalAnimation';
 
 export const defaultModalBodyAnimation = new ModalAnimation(defaultAnimationConfig);
 

@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react';
-import { makeObserver } from '../../store/store';
-import { defaultHideAnimation, invisibleStates, modalAnimationStage } from '../../constants';
+import {
+  defaultGlobalModalConfig,
+  defaultHideAnimation,
+  invisibleStates,
+  modalAnimationStage,
+} from '../../constants';
 import type { ModalObject } from '../ModalObject';
 import { NoneAnimation } from '../ModalOption';
 import type { ModalContainerProps } from '../types';
 import { AnimationStage, ModalState } from '../types';
-import Modal from '../Modal';
-import store from '../../store';
+import store, { makeObserver } from '../../store';
 
 import './index.css';
 import 'animate.css';
@@ -129,21 +132,23 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
   });
 
   useEffect(() => {
-    store.hasInit = true;
+    store.hasInit++;
+    if (store.hasInit > 1)
+      throw new Error('You have mounted multiple global containers, please check.');
     return () => {
-      store.hasInit = false;
+      store.hasInit--;
     };
   }, []);
 
   useEffect(() => {
     if (!props.modalMap) return;
     // 更新store的modalMap
-    Modal.setGlobalModalMap(props.modalMap);
+    store.modalMap = props.modalMap;
   }, [props.modalMap]);
 
   useEffect(() => {
     if (!props.config) return;
-    Modal.setGlobalConfig(props.config);
+    store.config = { ...defaultGlobalModalConfig, ...props.config };
   }, [props.config]);
 
   const renderModal = (modal: ModalObject, index: number) => {

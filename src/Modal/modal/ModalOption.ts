@@ -8,6 +8,7 @@ import ModalAnimation from './ModalAnimation';
 import { defaultModalOptions } from '../constants';
 import React from 'react';
 import store from '../store';
+import type { ModalObject } from '@lllhys/modal';
 
 export enum UpdateType {
   UPDATE,
@@ -36,12 +37,14 @@ const getDefaultValue = <T extends keyof typeof defaultModalOptions>(
 };
 
 export class ModalOptions {
+  target: ModalObject;
   options: ModalBaseOptions = {};
   zIndex: number = getDefaultValue('zIndex');
   showMask: boolean = getDefaultValue('showMask');
   maskStyle: React.CSSProperties = getDefaultValue('maskStyle');
   immediately: boolean = getDefaultValue('immediately');
   maskClosable: boolean = getDefaultValue('maskClosable');
+  props: Record<any, any> = {};
   // @ts-ignore
   maskComponent: ReactComponent = getDefaultValue('maskComponent');
   // @ts-ignore
@@ -49,8 +52,10 @@ export class ModalOptions {
   // @ts-ignore
   bodyAnimation: ModalAnimation | NoneAnimationType = getDefaultValue('bodyAnimation');
 
-  constructor(initOptions: ModalBaseOptions) {
+  constructor(initOptions: ModalBaseOptions, target: ModalObject) {
     this.options = initOptions;
+    this.target = target;
+    this.props = { _modal: target };
     this.updateOptions(initOptions, UpdateType.REPLACE);
   }
 
@@ -96,6 +101,9 @@ export class ModalOptions {
               );
             };
           }
+          break;
+        case 'props':
+          this[key] = { ..._tmpOptions[key], _modal: this.target };
           break;
         default:
           // @ts-ignore

@@ -4,8 +4,15 @@ import { ModalState } from './types';
 import { StoreModalList, updateAll } from '../store';
 import { ModalOptions, NoneAnimation } from './ModalOption';
 import type ModalAnimation from './ModalAnimation';
+import type { EventCall } from '../event/types';
 
 let globalId = 0;
+
+export interface ModalObject {
+  addEventListener: (name: string, call: EventCall) => void;
+  removeEventListener: (name: string, call: EventCall) => void;
+  removeAllEventListeners: () => void;
+}
 
 @UseEvent
 export class ModalObject {
@@ -13,7 +20,6 @@ export class ModalObject {
   readonly id;
   readonly key: string = '`467^$%89jkjh^&%*'; // 乱写的default key，应该不会有b能取到这个key吧
   private _options: ModalOptions; // 可配置的options and props
-  private _props: any = { _modal: this };
   private _asyncCallback: Record<string, CallableFunction> = {};
   private _state: ModalState = ModalState.INIT; // life-circle state
 
@@ -24,7 +30,7 @@ export class ModalObject {
     options?.key && (this.key = options.key);
     delete options?.key;
     // new option
-    this._options = new ModalOptions(options || {});
+    this._options = new ModalOptions(options || {}, this);
 
     // bodyComponent
     this._bodyComponent = com;
@@ -67,9 +73,20 @@ export class ModalObject {
   }
 
   get props(): any {
-    return this._props;
+    return this._options.props;
   }
 
+  setProps<T = any>(newProps: T) {
+    this._options.updateOptions({ props: newProps });
+    // 更新一下
+    updateAll();
+  }
+
+  setOptions(options: ModalUpdateOptions) {
+    this._options.updateOptions(options);
+    // 更新一下
+    updateAll();
+  }
   // setOptions(options: IOptionsExceptKey) {
   //   this._options = options;
   //   const singleAndNotMulti = store.config.showSingle && !store.config.multiMask;
@@ -164,20 +181,8 @@ export class ModalObject {
           );
           this.state = doneState;
         }
-      }, bodyAni.duration + 50);
+      }, bodyAni.duration + 200);
     });
-  }
-
-  setProps<T = any>(newProps: T) {
-    this._props = { ...this._props, ...newProps };
-    // 更新一下
-    updateAll();
-  }
-
-  setOptions(options: ModalUpdateOptions) {
-    this._options.updateOptions(options);
-    // 更新一下
-    updateAll();
   }
 
   // private replaceWildcardAnimation(stage: SwitchType) {

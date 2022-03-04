@@ -170,7 +170,10 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
         key={modal.id}
         id={`Modal_${modal.id}`}
         className="modal-container"
-        style={{ zIndex: modalOptions.zIndex, display: sectionDisplay }}
+        style={{
+          zIndex: modalOptions.zIndex,
+          display: sectionDisplay,
+        }}
       >
         {/*
             mask
@@ -190,7 +193,14 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
         {/*
             body
          */}
-        <div id={`ModalBody_${modal.id}`} {...generateBodyProps(modal)}>
+        <div
+          id={`ModalBody_${modal.id}`}
+          className="modal-body"
+          style={{
+            animation: generateAnimation(modal, 'body'),
+          }}
+          onAnimationEnd={(e: React.AnimationEvent) => handleAnimationEnd(e, modal)}
+        >
           <BodyCom {...modal.props} />
         </div>
       </section>

@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 import type { ModalObject } from '../modal/ModalObject';
 import type { ModalContainerProps } from '../modal/types';
 import { ModalGlobalConfig, ModalState } from '../modal/types';
 import { getArrayEle } from '../../utils';
 import { defaultGlobalModalConfig } from '../constants';
-import { useReducer } from 'react';
 
 export interface IStore extends Required<ModalContainerProps> {
   config: Required<ModalGlobalConfig>;
@@ -51,8 +50,11 @@ export namespace StoreModalList {
     if (store.config.showSingleModal) {
       // 前面的弹窗切换成暂隐
       const before = getArrayEle(store.modalList, -2);
-      if (before && (before.state === ModalState.SHOW || before.state === ModalState.UNHIDING))
-        before.state = ModalState.HIDING;
+      if (before) {
+        if (before.state === ModalState.SHOW || before.state === ModalState.UNHIDING)
+          before.state = ModalState.HIDING;
+        else if (before.state === ModalState.OPENING) before.state = ModalState.HIDING;
+      }
     }
   }
 
@@ -94,7 +96,7 @@ export function makeObserver<T = any>(Com: React.FC<T>) {
   const _new: React.FC<T> = (props) => {
     useUpdate();
 
-    return <Com {...props} />;
+    return React.createElement(Com, { ...props });
   };
 
   return React.memo(_new);

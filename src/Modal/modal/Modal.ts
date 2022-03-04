@@ -1,5 +1,4 @@
 import { ModalObject } from './ModalObject';
-import './AugmentationModalObject';
 import { getArrayEle } from '../../utils';
 import store from '../store';
 import type {

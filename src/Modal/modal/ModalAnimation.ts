@@ -43,6 +43,7 @@ export default class ModalAnimation {
   }
 
   getAnimationStyle(stage?: AnimationStage) {
+    // console.log(`${this.getAnimationName(stage)} ${this.duration}ms ${this.timingFunction}`);
     return `${this.getAnimationName(stage)} ${this.duration}ms ${this.timingFunction}`;
   }
 }

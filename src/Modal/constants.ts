@@ -56,7 +56,7 @@ export const animatingStates = [
 
 export const defaultHideAnimation = new ModalAnimation({
   duration: 200,
-  name: 'fade*',
+  name: 'all',
   timingFunction: '',
 });
 

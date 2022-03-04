@@ -64,10 +64,21 @@ const handleAnimationEnd = (e: React.AnimationEvent, modal: ModalObject) => {
   if (e.target.id !== `ModalBody_${modal.id}`) return;
   // if (e.eventPhase !== 2) return;
   // change state.
-  if (modal.state === ModalState.OPENING || modal.state === ModalState.UNHIDING)
-    modal.state = ModalState.SHOW;
-  if (modal.state === ModalState.HIDING) modal.state = ModalState.HIDDEN;
+  if (modal.state === ModalState.OPENING) modal.state = ModalState.SHOW;
   if (modal.state === ModalState.CLOSING) modal.state = ModalState.CLOSED;
+};
+
+/**
+ * 处理显示隐藏结束后状态切换
+ * @param e
+ * @param modal
+ */
+const handleTransitionEnd = (e: React.TransitionEvent, modal: ModalObject) => {
+  // @ts-ignore
+  if (e.target.id !== `ModalBody_${modal.id}`) return;
+  console.log('----', modal.id, modal.state);
+  if (modal.state === ModalState.HIDING) modal.state = ModalState.HIDDEN;
+  else if (modal.state === ModalState.UNHIDING) modal.state = ModalState.SHOW;
 };
 
 /**
@@ -77,15 +88,13 @@ const handleAnimationEnd = (e: React.AnimationEvent, modal: ModalObject) => {
  */
 const generateAnimation = (modal: ModalObject, type: 'body' | 'mask') => {
   if (
+    modal.options.immediately ||
     modal.state === ModalState.SHOW ||
     modal.state === ModalState.HIDDEN ||
-    modal.options.immediately
+    modal.state === ModalState.UNHIDING ||
+    modal.state === ModalState.HIDING
   )
     return '';
-  if (modal.state === ModalState.UNHIDING)
-    return defaultHideAnimation.getAnimationStyle(AnimationStage.IN);
-  if (modal.state === ModalState.HIDING)
-    return defaultHideAnimation.getAnimationStyle(AnimationStage.OUT);
   // attr key
   const key: 'maskAnimation' | 'bodyAnimation' = `${type}Animation`;
   const animation = modal.options[key];
@@ -97,16 +106,14 @@ const generateAnimation = (modal: ModalObject, type: 'body' | 'mask') => {
 };
 
 /**
- * 生成body组件的参数
+ * 生成隐藏渐变动画
  * @param modal
  */
-const generateBodyProps = (modal: ModalObject) => {
-  return {
-    className: `modal-body`,
-    style: { animation: generateAnimation(modal, 'body') },
-    onAnimationEnd: (e: React.AnimationEvent) => handleAnimationEnd(e, modal),
-    ...generateBodyClickHandlers(modal),
-  };
+const generateTransition = (modal: ModalObject) => {
+  if (modal.state === ModalState.UNHIDING)
+    return { opacity: 1, transition: defaultHideAnimation.getAnimationStyle() };
+  if (modal.state === ModalState.HIDING)
+    return { opacity: 0, transition: defaultHideAnimation.getAnimationStyle() };
 };
 
 /**
@@ -165,6 +172,8 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
 
     const maskDisplay = !_config.showSingleMask || index === 0 ? '' : 'none';
 
+    console.log(modal.id, modal.state);
+
     return (
       <section
         key={modal.id}
@@ -183,6 +192,7 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
           className="modal-mask"
           style={{
             ...modal.options.maskStyle,
+            ...generateTransition(modal),
             animation: generateAnimation(modal, 'mask'),
             display: maskDisplay,
           }}
@@ -197,9 +207,11 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
           id={`ModalBody_${modal.id}`}
           className="modal-body"
           style={{
+            ...generateTransition(modal),
             animation: generateAnimation(modal, 'body'),
           }}
-          onAnimationEnd={(e: React.AnimationEvent) => handleAnimationEnd(e, modal)}
+          onTransitionEnd={(e) => handleTransitionEnd(e, modal)}
+          onAnimationEnd={(e) => handleAnimationEnd(e, modal)}
         >
           <BodyCom {...modal.props} />
         </div>

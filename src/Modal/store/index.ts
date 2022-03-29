@@ -14,20 +14,21 @@ export interface IStore extends Required<ModalContainerProps> {
 
 const store: IStore = {
   updaters: [],
-  modalList: new Proxy([] as ModalObject[], {
-    set(target, p, value) {
-      // console.log('type=======', p);
-      // console.log("set监听", target, p, value, receiver);
-
-      target[p as keyof typeof target] = value;
-      if (p !== 'length') {
-        // 执行更新
-        updateAll();
-      }
-      // console.log("target", target)
-      return true;
-    },
-  }),
+  // modalList: new Proxy([] as ModalObject[], {
+  //   set(target, p, value) {
+  //     // console.log('type=======', p);
+  //     console.log('set监听', target, p, value);
+  //
+  //     target[p as keyof typeof target] = value;
+  //     if (p !== 'length') {
+  //       // 执行更新
+  //       updateAll();
+  //     }
+  //     // console.log("target", target)
+  //     return true;
+  //   },
+  // }),
+  modalList: [],
   modalMap: {},
   config: defaultGlobalModalConfig,
   hasInit: 0,
@@ -48,12 +49,21 @@ export namespace StoreModalList {
     if (store.modalList.includes(modal)) throw new Error('This modal already in modalList.');
     store.modalList.push(modal);
     if (store.config.showSingleModal) {
-      // 前面的弹窗切换成暂隐
-      const before = getArrayEle(store.modalList, -2);
-      if (before) {
-        if (before.state === ModalState.SHOW || before.state === ModalState.UNHIDING)
+      // 优先级模式
+      if (store.config.prioritization) {
+        // 根据优先级重新排序
+        store.modalList.sort((a, b) => a.options.priority - b.options.priority);
+      }
+      for (let i = 0; i < store.modalList.length - 1; i++) {
+        const before = store.modalList[i];
+        // 前面的弹窗切换成暂隐
+        // const before = getArrayEle(store.modalList, -2);
+        if (
+          before.state === ModalState.SHOW ||
+          before.state === ModalState.UNHIDING ||
+          before.state === ModalState.OPENING
+        )
           before.state = ModalState.HIDING;
-        else if (before.state === ModalState.OPENING) before.state = ModalState.HIDING;
       }
     }
   }

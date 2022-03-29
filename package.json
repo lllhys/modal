@@ -1,6 +1,6 @@
 {
   "name": "@lllhys/modal",
-  "version": "0.1.7",
+  "version": "1.0.0-beta.1",
   "license": "MIT",
   "homepage": "https://lllhys.github.io/modal",
   "author": "l@lllhy.com",
@@ -41,7 +41,6 @@
   "files": [
     "lib",
     "es",
-    "assets/*.css",
     "dist"
   ],
   "gitHooks": {

@@ -44,6 +44,7 @@ export class ModalOptions {
   maskStyle: React.CSSProperties = getDefaultValue('maskStyle');
   immediately: boolean = getDefaultValue('immediately');
   maskClosable: boolean = getDefaultValue('maskClosable');
+  priority: number = getDefaultValue('priority');
   props: Record<any, any> = {};
   // @ts-ignore
   maskComponent: ReactComponent = getDefaultValue('maskComponent');

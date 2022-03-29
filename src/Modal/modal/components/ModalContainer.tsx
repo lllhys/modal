@@ -75,8 +75,7 @@ const handleAnimationEnd = (e: React.AnimationEvent, modal: ModalObject) => {
  */
 const handleTransitionEnd = (e: React.TransitionEvent, modal: ModalObject) => {
   // @ts-ignore
-  if (e.target.id !== `ModalBody_${modal.id}`) return;
-  console.log('----', modal.id, modal.state);
+  if (e.target.id !== `Modal_${modal.id}`) return;
   if (modal.state === ModalState.HIDING) modal.state = ModalState.HIDDEN;
   else if (modal.state === ModalState.UNHIDING) modal.state = ModalState.SHOW;
 };
@@ -172,7 +171,7 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
 
     const maskDisplay = !_config.showSingleMask || index === 0 ? '' : 'none';
 
-    console.log(modal.id, modal.state);
+    // console.log(modal.id, modal.state);
 
     return (
       <section
@@ -182,7 +181,9 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
         style={{
           zIndex: modalOptions.zIndex,
           display: sectionDisplay,
+          ...generateTransition(modal),
         }}
+        onTransitionEnd={(e) => handleTransitionEnd(e, modal)}
       >
         {/*
             mask
@@ -192,7 +193,6 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
           className="modal-mask"
           style={{
             ...modal.options.maskStyle,
-            ...generateTransition(modal),
             animation: generateAnimation(modal, 'mask'),
             display: maskDisplay,
           }}
@@ -207,10 +207,8 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
           id={`ModalBody_${modal.id}`}
           className="modal-body"
           style={{
-            ...generateTransition(modal),
             animation: generateAnimation(modal, 'body'),
           }}
-          onTransitionEnd={(e) => handleTransitionEnd(e, modal)}
           onAnimationEnd={(e) => handleAnimationEnd(e, modal)}
         >
           <BodyCom {...modal.props} />

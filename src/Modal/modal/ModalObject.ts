@@ -53,6 +53,10 @@ export class ModalObject {
       // clear
       delete this._asyncCallback[state];
     }
+    if (state === ModalState.OPENING && !StoreModalList.has(this)) {
+      // 监听组件
+      StoreModalList.push(this);
+    }
     if (state === ModalState.CLOSING) {
       StoreModalList.prePop(this);
     }
@@ -120,11 +124,6 @@ export class ModalObject {
         this,
       );
       return;
-    }
-    if (!StoreModalList.has(this)) {
-      // 监听组件
-      StoreModalList.push(this);
-      // store.modalList.push(this);
     }
     const _options = this._options;
     if (

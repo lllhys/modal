@@ -26,12 +26,14 @@ interface BaseOptions {
   bodyAnimation?: ModalAnimationType;
   props?: Record<any, any>;
   key?: string;
+  priority?: number;
 }
 
 interface BaseGlobalOptions {
   showSingleModal?: boolean; // 只显示单一弹窗
   showSingleMask?: boolean; // 只显示单一蒙层
   destroyOnInvisible?: boolean;
+  prioritization?: boolean; // 弹窗优先级排序
 }
 
 export type ModalBaseOptions = BaseOptions;
@@ -45,7 +47,7 @@ export type ModalCreateOptions = ModalBaseOptions;
 
 export type ModalUpdateOptions = Omit<ModalBaseOptions, 'key'>;
 
-export type ModalGlobalConfig = Omit<BaseOptions, 'props' | 'key'> & BaseGlobalOptions;
+export type ModalGlobalConfig = Omit<BaseOptions, 'props' | 'key' | 'priority'> & BaseGlobalOptions;
 
 export type ModalMap = Record<string, ReactComponent>;
 

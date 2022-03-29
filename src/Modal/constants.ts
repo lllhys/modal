@@ -20,7 +20,8 @@ export const defaultCreateOptions = {
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   props: undefined,
-  zIndex: 1000,
+  zIndex: 100,
+  priority: 1,
 };
 
 export const defaultModalOptions = defaultCreateOptions;
@@ -31,6 +32,7 @@ export const defaultGlobalModalConfig = {
   showSingleModal: false,
   showSingleMask: false,
   destroyOnInvisible: false,
+  prioritization: false,
 };
 
 export const visibleStates = [

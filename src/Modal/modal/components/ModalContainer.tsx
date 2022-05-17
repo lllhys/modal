@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   defaultGlobalModalConfig,
   defaultHideAnimation,
@@ -133,8 +133,14 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
   const showPopList = getShowPopList();
 
   useEffect(() => {
-    if (showPopList.length) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'auto';
+    const html = document.getElementsByTagName('html')[0];
+    if (showPopList.length) {
+      html.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    } else {
+      html.style.overflow = 'auto';
+      document.body.style.overflow = 'auto';
+    }
   });
 
   useEffect(() => {
@@ -209,6 +215,9 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
           style={{
             animation: generateAnimation(modal, 'body'),
           }}
+          {
+            ...generateBodyClickHandlers(modal)
+          }
           onAnimationEnd={(e) => handleAnimationEnd(e, modal)}
         >
           <BodyCom {...modal.props} />

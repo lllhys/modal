@@ -95,7 +95,7 @@ const generateAnimation = (modal: ModalObject, type: 'body' | 'mask') => {
   )
     return '';
   // attr key
-  const key: 'maskAnimation' | 'bodyAnimation' = `${type}Animation`;
+  const key: 'maskAnimation' | 'bodyAnimation' = `${type}Animation` as ('maskAnimation' | 'bodyAnimation') ;
   const animation = modal.options[key];
 
   const stage = getModalAnimationStage(modal) ?? AnimationStage.IN;

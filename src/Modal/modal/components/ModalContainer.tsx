@@ -133,12 +133,12 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
   const showPopList = getShowPopList();
 
   useEffect(() => {
-    const html = document.getElementsByTagName('html')[0];
+    const html = document.documentElement;
     if (showPopList.length) {
-      html.style.overflow = 'hidden';
+      html.style.overflowY = 'hidden';
       document.body.style.overflow = 'hidden';
     } else {
-      html.style.overflow = 'auto';
+      html.style.overflowY = 'auto';
       document.body.style.overflow = 'auto';
     }
   });

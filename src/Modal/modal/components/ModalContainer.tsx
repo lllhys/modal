@@ -131,17 +131,30 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
   // const { modalList } = store;
 
   const showPopList = getShowPopList();
+  const overflowStyleRef = useRef<{set: boolean, value: string | undefined}>({set: false, value: undefined})
 
   useEffect(() => {
     const html = document.documentElement;
-    if (showPopList.length) {
+    const style = overflowStyleRef.current;
+    console.log(style);
+    if (showPopList.length && !style.set) {
+      style.value = html.style.overflowY
+      style.set = true;
       html.style.overflowY = 'hidden';
-      document.body.style.overflow = 'hidden';
-    } else {
-      html.style.overflowY = 'auto';
-      document.body.style.overflow = 'auto';
+      // document.body.style.overflow = 'hidden';
+    } else if (!showPopList.length) {
+      console.log('style', overflowStyleRef.current)
+      if (style.set && style.value)
+        html.style.overflowY = style.value
+      else
+        html.style.removeProperty('overflow-y')
+      style.set = false;
+      style.value = undefined;
+      // document.body.style.overflow = 'auto';
     }
-  });
+    console.log('end',style);
+
+  }, [showPopList.length]);
 
   useEffect(() => {
     store.hasInit++;

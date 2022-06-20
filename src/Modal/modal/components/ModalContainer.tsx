@@ -136,14 +136,12 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
   useEffect(() => {
     const html = document.documentElement;
     const style = overflowStyleRef.current;
-    console.log(style);
     if (showPopList.length && !style.set) {
       style.value = html.style.overflowY
       style.set = true;
       html.style.overflowY = 'hidden';
       // document.body.style.overflow = 'hidden';
     } else if (!showPopList.length) {
-      console.log('style', overflowStyleRef.current)
       if (style.set && style.value)
         html.style.overflowY = style.value
       else
@@ -152,8 +150,6 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
       style.value = undefined;
       // document.body.style.overflow = 'auto';
     }
-    console.log('end',style);
-
   }, [showPopList.length]);
 
   useEffect(() => {
@@ -207,17 +203,19 @@ const ModalContainer: React.FC<ModalContainerProps> = (props) => {
         {/*
             mask
          */}
-        <div
-          id={`ModalMask_${modal.id}`}
-          className="modal-mask"
-          style={{
-            ...modal.options.maskStyle,
-            animation: generateAnimation(modal, 'mask'),
-            display: maskDisplay,
-          }}
-        >
-          <MaskCom {...modal.props} />
-        </div>
+        {
+          modalOptions.showMask && <div
+            id={`ModalMask_${modal.id}`}
+            className="modal-mask"
+            style={{
+              ...modal.options.maskStyle,
+              animation: generateAnimation(modal, 'mask'),
+              display: maskDisplay,
+            }}
+          >
+            <MaskCom {...modal.props} />
+          </div>
+        }
 
         {/*
             body

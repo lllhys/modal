@@ -70,13 +70,11 @@ export namespace StoreModalList {
 
   export function prePop(modal: ModalObject) {
     const modalIndex = store.modalList.findIndex((v) => v.id === modal.id);
-    if (store.config.showSingleModal) {
-      if (modalIndex === store.modalList.length - 1) {
-        // 最后一个弹窗时,切换前一个弹窗状态
-        const before = getArrayEle(store.modalList, -2);
-        if (before && (before.state === ModalState.HIDDEN || before.state === ModalState.HIDING))
-          before.state = ModalState.UNHIDING;
-      }
+    if (modalIndex === store.modalList.length - 1) {
+      // 最后一个弹窗时,切换前一个弹窗状态
+      const before = getArrayEle(store.modalList, -2);
+      if (before && (before.state === ModalState.HIDDEN || before.state === ModalState.HIDING))
+        before.state = ModalState.UNHIDING;
     }
   }
 

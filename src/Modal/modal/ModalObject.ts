@@ -1,10 +1,10 @@
-import { FunctionEvent, FunctionEventTypes, PropertyEvent, UseEvent } from '../event/Event';
-import type { ModalCreateOptions, ModalUpdateOptions, ReactComponent } from './types';
-import { ModalState } from './types';
-import { StoreModalList, updateAll } from '../store';
-import { ModalOptions, NoneAnimation } from './ModalOption';
+import {FunctionEvent, FunctionEventTypes, PropertyEvent, UseEvent} from '../event/Event';
+import type {ModalCreateOptions, ModalUpdateOptions, ReactComponent} from './types';
+import {ModalState} from './types';
+import {StoreModalList, updateAll} from '../store';
+import {ModalOptions, NoneAnimation} from './ModalOption';
 import type ModalAnimation from './ModalAnimation';
-import type { EventCall } from '../event/types';
+import type {EventCall} from '../event/types';
 
 let globalId = 0;
 
@@ -53,7 +53,8 @@ export class ModalObject {
       // clear
       delete this._asyncCallback[state];
     }
-    if (state === ModalState.OPENING && !StoreModalList.has(this)) {
+
+    if ((state === ModalState.OPENING || state === ModalState.SHOW) && !StoreModalList.has(this)) {
       // 监听组件
       StoreModalList.push(this);
     }

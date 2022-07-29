@@ -40,7 +40,10 @@ export default () => {
   const modalRef = useRef<ModalObject>();
 
   const handleCreate = () => {
-    modalRef.current = new ModalObject(Test, { bodyAnimation: { name: 'flip*{Y|X}' } });
+    modalRef.current = new ModalObject(Test, {
+      bodyAnimation: { name: 'flip*{Y|X}' },
+      props: { text: 'ddsssss' },
+    });
   };
 
   const handleOpen = () => {

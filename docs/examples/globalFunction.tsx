@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import Modal, { ModalContainer, ModalProps } from '@lllhys/modal';
 
 const Test = (props: ModalProps) => {
+  console.log(props._modal)
   const handleOpen = () => {
     Modal.openModal(Test, {
       bodyAnimation: {
@@ -32,7 +33,7 @@ const Test = (props: ModalProps) => {
 
 export default () => {
   const handleCreate = () => {
-    const modal = Modal.createModal(Test, { bodyAnimation: { name: 'flip*{Y|X}' } });
+    const modal = Modal.createModal(Test, { bodyAnimation: { name: 'flip*{Y|X}' }});
 
     setTimeout(() => {
       modal.open();
@@ -40,7 +41,7 @@ export default () => {
   };
 
   const handleOpen = () => {
-    Modal.openModal(Test);
+    Modal.openModal(Test, {maskClosable: true, showMask: false });
   };
 
   return (

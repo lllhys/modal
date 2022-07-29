@@ -1,7 +1,5 @@
-import React  from 'react';
+import React from 'react';
 import Modal, { ModalContainer, ModalProps } from '@lllhys/modal';
-
-Modal.init();
 
 const Test = (props: ModalProps) => {
   console.log(props);
@@ -9,10 +7,8 @@ const Test = (props: ModalProps) => {
     // Open a new modal and set maskStyle attr.
     // 打开一个新的弹窗
     Modal.openModal(Test, {
-      maskStyle: {
-        backgroundColor: 'rgba(183,170,24,0.5)',
-      },
       maskClosable: true,
+      maskStyle: { backgroundColor: 'transparent' },
     });
   };
   const handleClickCLose = () => {
@@ -36,32 +32,45 @@ const Test = (props: ModalProps) => {
     >
       <button onClick={handleClick}>Open new</button>
       <button onClick={handleClickCLose}>Close Current</button>
+      <h1>{props.p}</h1>
     </div>
   );
 };
 
 export default () => {
   const handleClick = () => {
-    const modal = Modal.createModal(Test);
+    // const modal = Modal.createModal(Test, {
+    //   maskStyle: { backgroundColor: 'rgba(0,0,0,1)' },
+    // });
 
-    console.log(modal);
+    // console.log(modal);
 
-    modal.addEventListener('onStateChange', () => {
-      console.log('state change');
-    });
-    modal.addEventListener('onOpenStart', () => {
-      console.log('onOpenStart');
-    });
+    // modal.addEventListener('onStateChange', () => {
+    //   console.log('state change');
+    // });
+    // modal.addEventListener('onOpenStart', () => {
+    //   console.log('onOpenStart');
+    // });
+    //
+    // modal.addEventListener('onOpenEnd', () => {
+    //   console.log('onOpenEnd');
+    // });
+    //
+    // modal.addEventListener('onCloseEnd', () => {
+    //   console.log('onCloseEnd');
+    // });
 
-    modal.addEventListener('onOpenEnd', () => {
-      console.log('onOpenEnd');
-    });
+    // modal.open();
 
-    modal.addEventListener('onCloseEnd', () => {
-      console.log('onCloseEnd');
-    });
+    // Modal.openModal(Test, { priority: 2, props: { p: 2 } });
+    // Modal.openModal(Test, { priority: 4, props: { p: 4 } });
+    // Modal.openModal(Test, { priority: 1, props: { p: 1 } });
+    // Modal.openModal(Test, { priority: 3, props: { p: 3 } });
 
-    modal.open();
+    // setTimeout(() => {
+    Modal.openModal(Test);
+
+    // }, 100);
   };
 
   return (
@@ -71,11 +80,9 @@ export default () => {
       <ModalContainer
         config={{
           showSingleModal: true,
-          destroyOnInvisible: false,
-          showSingleMask: true,
-          maskStyle: {
-            backgroundColor: 'rgba(0, 100, 100, 0.5)',
-          },
+          destroyOnInvisible: true,
+          showSingleMask: false,
+          // prioritization: true,
         }}
       />
     </div>

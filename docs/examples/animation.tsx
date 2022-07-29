@@ -9,6 +9,7 @@ const Test = (props: ModalProps) => {
   return (
     <>
       <h6>this is a modal</h6>
+      <button onClick={() => {Modal.openModal(Test)}} >12341</button>
       <button onClick={handleClose}>closeModal</button>
     </>
   );
@@ -16,9 +17,11 @@ const Test = (props: ModalProps) => {
 
 export default () => {
   const handleOpen1 = () => {
-    Modal.openModal(Test, {
-      bodyAnimation: { name: 'fade*' },
-    });
+    Modal.setGlobalConfig({
+      bodyAnimation: false,
+      maskAnimation: false
+    })
+    Modal.openModal(Test);
   };
 
   const handleOpen2 = () => {
@@ -35,6 +38,9 @@ export default () => {
 
   return (
     <div>
+      <button onClick={handleOpen1}>open fade*</button>
+      <button onClick={handleOpen2}>open {`slide*{Up|Down}`}</button>
+      <button onClick={handleOpen3}>open {`{jello|wobble}`}</button>
       <h6>use animation</h6>
       <h6>use animation</h6>
       <h6>use animation</h6>
@@ -43,9 +49,7 @@ export default () => {
       <h6>use animation</h6>
       <h6>use animation</h6>
 
-      <button onClick={handleOpen1}>open fade*</button>
-      <button onClick={handleOpen2}>open {`slide*{Up|Down}`}</button>
-      <button onClick={handleOpen3}>open {`{jello|wobble}`}</button>
+
       <ModalContainer config={{ maskStyle: { backgroundColor: 'rgba(147,186,255,0.8)' } }} />
     </div>
   );

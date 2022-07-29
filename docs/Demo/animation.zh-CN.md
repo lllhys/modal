@@ -7,11 +7,15 @@ order: 3
 
 组件依赖于动画库[animate.css](https://animate.style/)，你可以使用上面的任意一个动画作为弹窗的打开/关闭过渡动画。
 
+<Alert type="info">
+  注意，由于animate.css在部分情况下可能需要使用css loader进行转换，若发现animate.css报错，请检查项目构建工具配置
+</Alert>
+
 ## 使用
 
-弹窗的打开关闭方法都提供了 options 配置，具体参阅 API 手册。animate 配置支持一下参数
+弹窗的打开关闭方法都提供了 options 配置，具体参阅 API 手册。animate 配置支持以下参数
 
-- name: keyframes 的名称，支持你项目中手写的 global css 或者时 animate.css 当中的动画名称
+- name: keyframes 的名称，支持你项目中的 global css keyframes 或者 animate.css 当中的动画名称
 - duration: 持续时间（ms）
 - timingFunction： 参阅[animation-timing-function](https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timing-function)
 

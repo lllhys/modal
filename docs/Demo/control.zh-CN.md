@@ -13,9 +13,17 @@ order: 2
 
 实例方法增加了对弹窗组件 props，options 的配置方法。
 
+## 获取实例
+
+存在3种方式获取弹窗实例：
+1. 上下文获取实例: `Modal.createModal`, `Modal.openModal`后会将弹窗实例返回
+2. 外部获取实例: `Modal.getModalInstanceByMap`, `Modal.getModalInstanceByKey`, `Modal.getModalInstanceByName`方法获取实例
+3. 弹窗组件内部获取: 弹窗内部使用`this.props._modal`获取当前弹窗对应的实例对象
+
+
 ## 全局方法
 
-全局提供了`createModal`、`pushModal`、`closeMdoal`、`closeAllModals`方法用于控制弹窗的打开与关闭。
+全局提供了`createModal`、`openModal`、`closeMdoal`、`closeAllModals`方法用于控制弹窗的打开与关闭。
 
 <code src="../examples/globalFunction.tsx" />
 

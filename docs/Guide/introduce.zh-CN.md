@@ -29,23 +29,23 @@ npm install @lllhys/modal
 ```tsx | pure
 import Modal, {ModalContainer, IModalProps} from '@lllhys/modal';
 
-interface IProps {
 
+const ModalFC = (props: IModalProps<{}>) => {
+  return <div></div>
 }
 
-const ModalFC = (props: IModalProps<IProps>) => {
-
-}
+// init a modal container
+Modal.init();
 
 // App.jsx
-
 const App = () => {
   const handleClick = () => {
-    const modal = Modal.createModal(ModalFC);
+    const modal = Modal.openModal(ModalFC);
   }
   return <>
-    <button onClick = {handleClick} > open < /button>
-    < ModalContainer / >
+    <button onClick={handleClick} > open < /button>
+    {/* Or use container component to register*/}
+    {/*< ModalContainer / >*/}
     </>
 }
 

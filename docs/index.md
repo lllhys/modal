@@ -10,7 +10,7 @@ hero:
 features:
   - icon: https://gw.alipayobjects.com/zos/bmw-prod/d1ee0c6f-5aed-4a45-a507-339a4bfe076c/k7bjsocq_w144_h144.png
     title: Support for event listening
-    desc:  Provides full event callbacks for the life cycle of popover instances
+    desc: Provides full event callbacks for the life cycle of popover instances
   - icon: https://gw.alipayobjects.com/zos/bmw-prod/b8570f4d-c1b1-45eb-a1da-abff53159967/kj9t990h_w144_h144.png
     title: Built-in animation
     desc: Built-in an animation library, commonly used animation out of the box

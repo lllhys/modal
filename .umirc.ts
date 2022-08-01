@@ -1,8 +1,9 @@
-import {defineConfig} from 'dumi';
+import { defineConfig } from 'dumi';
 
 export default defineConfig({
   title: 'Modal',
   favicon: '/modal/images/logo.png',
+  targets: { chrome: 20, firefox: 40, safari: 8, edge: 13, ios: 8 },
   logo: '/modal/images/logo.png',
   outputPath: 'docs-dist',
   locales: [
@@ -21,10 +22,10 @@ export default defineConfig({
     },
   ],
   resolve: {
-    excludes: ['docs/HomePage']
+    excludes: ['docs/HomePage'],
   },
   themeConfig: {
     carrier: '@lllhys/modal', // 设备状态栏左侧的文本内容
-  }
+  },
   // more config: https://d.umijs.org/config
 });

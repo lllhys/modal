@@ -1,6 +1,7 @@
 {
   "name": "@lllhys/modal",
-  "version": "0.1.8-beta.2",
+  "version": "1.0.6",
+  "license": "MIT",
   "homepage": "https://lllhys.github.io/modal",
   "author": "l@lllhy.com",
   "keywords": [
@@ -25,10 +26,14 @@
     "docs:deploy": "gh-pages -d docs-dist",
     "build": "father build",
     "deploy": "npm run docs:build && npm run docs:deploy",
+    "lint": "eslint src/ --ext .ts,.tsx,.jsx,.js,.md",
+    "lint:tsc": "tsc -p tsconfig.json --noEmit",
+    "lint-fix": "eslint --fix --ext .ts,.tsx,.jsx,.js,.md",
     "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
     "test": "umi-test",
     "test:coverage": "umi-test --coverage",
-    "prepublishOnly": "yarn build"
+    "prepublishOnly": "yarn build",
+    "prepare": "husky install"
   },
   "main": "./dist/index",
   "module": "./dist/index",
@@ -36,7 +41,6 @@
   "files": [
     "lib",
     "es",
-    "assets/*.css",
     "dist"
   ],
   "gitHooks": {
@@ -64,8 +68,12 @@
     "@types/jest": "^27.0.3",
     "@umijs/fabric": "^2.8.1",
     "@umijs/test": "^3.0.5",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "dumi": "^1.1.0",
     "dumi-theme-mobile": "^1.1.19",
+    "eslint": "^7.1.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-react": "^7.20.6",
     "father": "^2.29.6",
     "father-build": "^1.17.2",
     "gh-pages": "^3.0.0",

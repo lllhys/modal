@@ -1,41 +1,70 @@
-import {
-  IBaseModalOptions,
-  ICloseModalOptions,
-  ICreateModalOptions,
-  IModalAnimate,
-  IModalConfig,
-} from './types';
+import { AnimationStage, ModalState } from './modal/types';
+import React from 'react';
+import ModalAnimation, { defaultAnimationConfig } from './modal/ModalAnimation';
 
-export const defaultAnimateName = 'zoom*';
+export const defaultModalBodyAnimation = new ModalAnimation(defaultAnimationConfig);
 
-export const defaultAnimate: IModalAnimate = {
-  duration: 400,
-  name: defaultAnimateName,
-  timingFunction: '',
-};
+export const defaultModalMaskAnimation = new ModalAnimation({
+  ...defaultAnimationConfig,
+  name: 'fade*',
+});
 
-export const defaultCreateOptions: ICreateModalOptions = {
-  immediately: true,
-  animate: defaultAnimate,
-  mask: true,
+export const defaultCreateOptions = {
+  immediately: false,
+  maskComponent: React.createElement('div'),
+  maskAnimation: defaultModalMaskAnimation,
+  bodyAnimation: defaultModalBodyAnimation,
+  showMask: true,
   maskClosable: false,
-  maskStyle: {},
-  props: undefined,
-  zIndex: 1000,
-};
-
-export const defaultCloseOptions: ICloseModalOptions = {
-  immediately: true,
-  animate: defaultAnimate,
-};
-
-export const defaultModalConfig: IModalConfig = {
-  showSingle: false,
-  zIndex: 3000,
-  mask: true,
   maskStyle: {
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
-  multiMask: false,
+  props: undefined,
+  zIndex: 100,
+  priority: 1,
+};
+
+export const defaultModalOptions = defaultCreateOptions;
+
+export const defaultGlobalModalConfig = {
+  ...defaultCreateOptions,
+  zIndex: 100,
+  showSingleModal: false,
+  showSingleMask: false,
   destroyOnInvisible: false,
+  prioritization: false,
+};
+
+export const visibleStates = [
+  ModalState.SHOW,
+  ModalState.CLOSING,
+  ModalState.OPENING,
+  ModalState.HIDING,
+];
+
+export const invisibleStates = [
+  ModalState.CREATED,
+  ModalState.INIT,
+  ModalState.CLOSED,
+  ModalState.CLOSED,
+];
+
+export const animatingStates = [
+  ModalState.OPENING,
+  ModalState.CLOSING,
+  ModalState.HIDING,
+  ModalState.UNHIDING,
+];
+
+export const defaultHideAnimation = new ModalAnimation({
+  duration: 200,
+  name: 'all',
+  timingFunction: '',
+});
+
+export const modalAnimationStage: Record<string, AnimationStage | undefined> = {
+  [ModalState.OPENING]: AnimationStage.IN,
+  [ModalState.UNHIDING]: AnimationStage.IN,
+  [ModalState.CLOSING]: AnimationStage.OUT,
+  [ModalState.HIDING]: AnimationStage.OUT,
 };

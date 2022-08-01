@@ -6,7 +6,6 @@ A mobile side modal component, to achieve a complete life cycle of the object, b
 
 You can see our docs on https://lllhys.github.io/modal/
 
-
 ## Install
 
 ```shell
@@ -18,7 +17,6 @@ npm install @lllhys/modal
 ## Usage
 
 This is a simple demonstration of how to use `Modal`, please read the documentation if you want to learn more.[Doc](https://lllhys.github.io/modal/)
-
 
 ```tsx | pure
 import Modal, {ModalContainer, IModalProps} from '@lllhys/modal';

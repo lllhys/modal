@@ -1,23 +1,25 @@
 import React, { useRef } from 'react';
-import Modal, { ModalContainer, IModalProps } from '@lllhys/modal';
+import Modal, { ModalContainer, ModalProps } from '@lllhys/modal';
 
-const Test = (props: IModalProps) => {
-
+const Test = (props: ModalProps) => {
+  console.log(props._modal)
   const handleOpen = () => {
-    Modal.pushModal(Test, {animate: {
-      name: "zoom*{Left|Right}"
-      }})
-  }
+    Modal.openModal(Test, {
+      bodyAnimation: {
+        name: 'zoom*{Left|Right}',
+      },
+    });
+  };
 
   const handleClose = () => {
     Modal.closeModal();
     // or Modal.closeModal(Test);
     // or props._modal.close();
-  }
+  };
 
   const handleCloseAll = () => {
     Modal.closeAllModals();
-  }
+  };
 
   return (
     <>
@@ -26,24 +28,21 @@ const Test = (props: IModalProps) => {
       <button onClick={handleClose}>closeModal</button>
       <button onClick={handleCloseAll}>closeAllModals</button>
     </>
-
   );
 };
 
 export default () => {
-
   const handleCreate = () => {
-    const modal = Modal.createModal(Test, {animate: {name: "flip*{Y|X}"}})
+    const modal = Modal.createModal(Test, { bodyAnimation: { name: 'flip*{Y|X}' }});
 
     setTimeout(() => {
       modal.open();
-    }, 1000)
-
-  }
+    }, 1000);
+  };
 
   const handleOpen = () => {
-    Modal.pushModal(Test)
-  }
+    Modal.openModal(Test, {maskClosable: true, showMask: false });
+  };
 
   return (
     <div>

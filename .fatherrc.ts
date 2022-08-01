@@ -1,5 +1,5 @@
 export default {
-  cjs: "rollup",
-  esm: { type: "rollup", importLibToEs: true },
+  cjs: 'rollup',
+  esm: { type: 'rollup', importLibToEs: true },
   runtimeHelpers: true,
 };

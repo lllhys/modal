@@ -1,14 +1,12 @@
-import {EventCall, IEvent, IEventClass, EventType} from '../types';
-import {firstToUpper} from "../../utils";
+import type { EventCall, ModalEvent, EventClass, EventType } from './types';
+import { firstToUpper } from '../../utils';
 
 export enum FunctionEventTypes {
   BEFORE = 'before',
   AFTER = 'after',
 }
 
-interface IEventListeners {
-  [name: string]: EventCall[];
-}
+type IEventListeners = Record<string, EventCall[]>;
 
 /**
  * get event from target object.
@@ -26,32 +24,25 @@ const getEventListener = (
   return _r.length ? _r[0] : undefined;
 };
 
-
-class Event implements IEvent {
-
+class Event implements ModalEvent {
   type;
   target;
   value;
 
   constructor(type: EventType, target: any, value?: any) {
     this.type = type;
-    this.target = target
-    this.value = value
+    this.target = target;
+    this.value = value;
   }
-
 }
 
 /**
  * 事件装饰器
  * @param Target
  */
-export function UseEvent<T extends { new(...args: any[]): {} }>(Target: T) {
-  return class extends Target implements IEventClass {
-    events: { [key: string]: EventCall[] } = {};
-
-    constructor(...args: any[]) {
-      super(...args);
-    }
+export function UseEvent<T extends { new (...args: any[]): any }>(Target: T) {
+  return class extends Target implements EventClass {
+    events: Record<string, EventCall[]> = {};
 
     addEventListener(name: string, call: EventCall) {
       if (!this.events) this.events = {};
@@ -85,26 +76,25 @@ export function FunctionEvent(name: string, events: FunctionEventTypes[]) {
     const row = descriptor.value;
     descriptor.value = async function (...args: any[]) {
       if (events.includes(FunctionEventTypes.BEFORE)) {
-
         // 执行before监听回调
         const beforeName = `on${name}Start`;
-        const e = new Event(beforeName as EventType, this)
+        const e = new Event(beforeName as EventType, this);
         // @ts-ignore
-        this.events?.[beforeName] && this.events[beforeName].forEach((v: Function) => v(e));
+        this.events?.[beforeName] && this.events[beforeName].forEach((v: EventCall) => v(e));
       }
-      await row.apply(this, args);
+      const result = await row.apply(this, args);
       if (events.includes(FunctionEventTypes.AFTER)) {
         // 执行after监听回调
         const afterName = `on${name}End`;
-        const e = new Event(afterName as EventType, this)
+        const e = new Event(afterName as EventType, this);
         // @ts-ignore
-        this.events?.[afterName] && this.events[afterName].forEach((v: Function) => v(e));
+        this.events?.[afterName] && this.events[afterName].forEach((v: EventCall) => v(e));
       }
+      return result;
     };
     return descriptor;
   };
 }
-
 
 /**
  * 属性装饰器
@@ -112,21 +102,17 @@ export function FunctionEvent(name: string, events: FunctionEventTypes[]) {
  * @constructor
  */
 export function PropertyEvent(name: string) {
-
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    const eventName = `on${firstToUpper(name)}Change`
+    const eventName = `on${firstToUpper(name)}Change`;
     const set = descriptor.set;
     // set 方法覆盖
     descriptor.set = function (newVal: any) {
       // console.log(newVal);
-      const e = new Event(eventName as EventType, this, newVal)
+      const e = new Event(eventName as EventType, this, newVal);
       // @ts-ignore
-      this.events?.[eventName] && this.events[eventName].forEach((v: Function) => v(e));
+      this.events?.[eventName] && this.events[eventName].forEach((v: EventCall) => v(e));
       set && set.apply(this, [newVal]);
-    }
+    };
     return descriptor;
-  }
-
-
+  };
 }
-

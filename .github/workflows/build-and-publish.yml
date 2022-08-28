@@ -121,7 +121,7 @@ jobs:
           github_token: ${{ secrets.ACCESS_TOKEN }}
           publish_dir: ./docs-dist
 
-    needs: [setup, publish]
+    needs: [setup]
 
 #  coverage:
 #    runs-on: ubuntu-latest

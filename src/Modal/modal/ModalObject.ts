@@ -81,7 +81,7 @@ export class ModalObject {
     return this._options.props;
   }
 
-  setProps<T = any>(newProps: T) {
+  setProps<T extends Record<any, any> = any>(newProps: T) {
     this._options.updateOptions({ props: newProps });
     // 更新一下
     updateAll();
